@@ -16,7 +16,13 @@ I just want to learn how to do basic things using the app router. Adding done an
 
 ## Getting Started
 
-First, run the development server:
+First, create a new file in the root directory `.env`. It just needs one line `NEXTAUTH_SECRET=xxxxxx`. To generate the secret, NextAuth [recommends](https://next-auth.js.org/configuration/options#secret) using the command
+
+```bash
+openssl rand -base64 32
+```
+
+Next, run the development server:
 
 ```bash
 npx next dev
@@ -30,7 +36,9 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Check out [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+Don't forget to set an [environment variable](https://vercel.com/docs/concepts/projects/environment-variables) for `NEXTAUTH_SECRET` in your project.
 
 ### Done
 
