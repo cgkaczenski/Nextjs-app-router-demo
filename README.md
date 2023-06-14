@@ -54,4 +54,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 - The root layout replaces the \_app.js and \_document.js files. View the [migration guide](https://nextjs.org/docs/app/building-your-application/upgrading/app-router-migration#migrating-_documentjs-and-_appjs).
 - Route Handlers replace API Routes inside the pages directory meaning you do not need to use API Routes and Route Handlers together.
-- Next Links now automatically include the <a> tag
+- Next Links now automatically include the `<a>` tag
