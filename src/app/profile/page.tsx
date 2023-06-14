@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Fragment } from "react";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../../pages/api/auth/[...nextauth]";
+import { authOptions } from "../api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
 
 export default async function ProfilePage() {
