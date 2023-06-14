@@ -12,14 +12,14 @@ The live demo can be found [here](https://nextjs-app-router-demo.vercel.app/). T
 
 ## Plan
 
-I just want to learn how to do basic things using the app router. Adding done and todo sections at the bottom of this readme. To start, I'll just setup some basic auth with protected routes and user management. I notice that NextAuth has a little [documentation](https://next-auth.js.org/configuration/initialization#route-handlers-app) about using [Route Handlers](https://nextjs.org/docs/app/building-your-application/routing/router-handlers) to get started. Another option is for getting started is [Supabase](https://supabase.com/docs/guides/auth/auth-helpers/nextjs#server-components). While I would like to use PostgreSQL hosted on Supabase or [Railway](https://railway.app), I am not sure if I want to sprinkle Supabase code throughout my app because I would like to make something that is not platform specific.
+I just want to learn how to do basic things using the app router. Adding done and todo sections at the bottom of this readme. To start, I'll just setup some basic auth with protected routes and user management. I notice that NextAuth has a (very) little [documentation](https://next-auth.js.org/configuration/initialization#route-handlers-app) about using [Route Handlers](https://nextjs.org/docs/app/building-your-application/routing/router-handlers) to get started. Another option is for getting started is [Supabase](https://supabase.com/docs/guides/auth/auth-helpers/nextjs#server-components). While I would like to use PostgreSQL hosted on Supabase or [Railway](https://railway.app), I am not sure if I want to sprinkle Supabase code throughout my app because I would like to make something that is not platform specific.
 
 ## Getting Started
 
 First, run the development server:
 
 ```bash
-npx next dev --turbo
+npx next dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
@@ -36,12 +36,15 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 - Basic pages, layouts, routes, and links
 
-### Todo
+### In Progress
 
 - Authentication
 - Sessions
-- Route Handlers
 - Page guards
+
+### Todo
+
+- Route Handlers
 - Database integration
 - Sign in/ Sign up
 - Password change
@@ -54,4 +57,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 - The root layout replaces the \_app.js and \_document.js files. View the [migration guide](https://nextjs.org/docs/app/building-your-application/upgrading/app-router-migration#migrating-_documentjs-and-_appjs).
 - Route Handlers replace API Routes inside the pages directory meaning you do not need to use API Routes and Route Handlers together.
-- Next Links now automatically include the `<a>` tag
+- Next Links now automatically include the `<a>` tag, but you should still use tag when you want to force a server request to check the session.
+- Redirect function exists for redirecting in server components
+- For user interactivity, a client component must be used. `"use client";` can be written at the top of a client component, then "sprinkled" into the server component

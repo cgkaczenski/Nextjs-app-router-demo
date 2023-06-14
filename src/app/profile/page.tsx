@@ -1,11 +1,21 @@
 import Link from "next/link";
 import { Fragment } from "react";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../../pages/api/auth/[...nextauth]";
+import { redirect } from "next/navigation";
 
-export default function ProfilePage() {
+export default async function ProfilePage() {
+  const session = await getServerSession(authOptions);
+  console.log("app router session:", session);
+
+  if (!session) {
+    redirect("/authform");
+  }
+
   return (
     <Fragment>
       <div>
-        <h1>Hello, Profile Page!</h1>
+        <h1>Hello, App Router Profile Page!</h1>
         <Link href="/">Home</Link>
       </div>
       <form>
