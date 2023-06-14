@@ -43,18 +43,18 @@ Don't forget to set an [environment variable](https://vercel.com/docs/concepts/p
 ### Done
 
 - Basic pages, layouts, routes, and links
+- Database integration
+- Sign in/ Sign up
+- Page guards
 
 ### In Progress
 
+- Route Handlers
 - Authentication
 - Sessions
-- Page guards
 
 ### Todo
 
-- Route Handlers
-- Database integration
-- Sign in/ Sign up
 - Password change
 - Style
 - Admin page

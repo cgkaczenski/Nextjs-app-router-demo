@@ -1,6 +1,12 @@
 import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
+type User = {
+  id: string;
+  name: string;
+  email: string;
+};
+
 export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
@@ -14,7 +20,7 @@ export const authOptions: AuthOptions = {
           throw new Error("Invalid credentials");
         }
 
-        return { id: "132", name: "test", email: "test" };
+        return { id: "132", name: "test", email: "test" } as User;
       },
     }),
   ],
