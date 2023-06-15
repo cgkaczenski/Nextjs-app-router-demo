@@ -2,13 +2,13 @@
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-On May 4th 2023, Next.js 13.4 was released, marking stability for the App Router. You can read the blog post [here](https://nextjs.org/blog/next-13-4). This introduces the concept of server components! It seems the React and Next.js teams have been working closely together to push React components down to the server. You can read more about the concept in the [Next.js docs](https://nextjs.org/docs/getting-started/react-essentials#thinking-in-server-components) as well as in [this post](https://react.dev/blog/2023/03/22/react-labs-what-we-have-been-working-on-march-2023#react-server-components) from the React team.
+On May 4th 2023, Next.js 13.4 was released, marking stability for the App Router. You can read the blog post [here](https://nextjs.org/blog/next-13-4). You can read more about the concept in the [Next.js docs](https://nextjs.org/docs/getting-started/react-essentials#thinking-in-server-components) as well as in [this post](https://react.dev/blog/2023/03/22/react-labs-what-we-have-been-working-on-march-2023#react-server-components) from the React team.
 
 I am creating this repo as a learning demo, so I can learn this new mental model.
 
 ## Live demo
 
-The live demo can be found [here](https://nextjs-app-router-demo.vercel.app/). The app has three pages for a home screen (unprotected), profile page for password change, and authform for signin and signup. I don't have guards for routes, database, auth, or server-side logic setup yet.
+The live demo can be found [here](https://nextjs-app-router-demo.vercel.app/). The app has three pages for a home screen (unprotected), profile page for password change, and authform for signin and signup.
 
 ## Plan
 
@@ -46,20 +46,23 @@ Don't forget to set an [environment variable](https://vercel.com/docs/concepts/p
 - Database integration
 - Sign in/ Sign up
 - Page guards
-
-### In Progress
-
 - Route Handlers
 - Authentication
 - Sessions
 
+### In Progress
+
+- Sign out
+- Password change
+
 ### Todo
 
-- Password change
+- Navbar
 - Style
-- Admin page
 - Roles
+- Admin page
 - User management
+- Email
 
 ### Things I've learned
 

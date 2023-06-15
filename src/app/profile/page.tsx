@@ -6,7 +6,6 @@ import { redirect } from "next/navigation";
 
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
-  console.log("app router session:", session);
 
   if (!session) {
     redirect("/authform");

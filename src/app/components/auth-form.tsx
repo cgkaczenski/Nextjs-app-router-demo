@@ -40,19 +40,29 @@ export default function AuthForm() {
     if (isLogin) {
       const result = await signIn("credentials", {
         redirect: false,
-        email: "test",
-        password: "test",
+        email: enteredEmail,
+        password: enteredPassword,
       });
 
       if (!result?.error) {
         router.replace("/");
       }
+
+      console.log(result);
     }
 
     if (!isLogin && enteredEmail && enteredPassword) {
       try {
-        const result = await createUser(enteredEmail, enteredPassword);
-        console.log(result);
+        const createResult = await createUser(enteredEmail, enteredPassword);
+        console.log(createResult);
+        const signinResult = await signIn("credentials", {
+          redirect: false,
+          email: enteredEmail,
+          password: enteredPassword,
+        });
+        if (!signinResult?.error) {
+          router.replace("/");
+        }
       } catch (error) {
         console.log(error);
       }
