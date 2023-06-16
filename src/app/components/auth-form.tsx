@@ -43,12 +43,9 @@ export default function AuthForm() {
         email: enteredEmail,
         password: enteredPassword,
       });
-
       if (!result?.error) {
         router.replace("/");
       }
-
-      console.log(result);
     }
 
     if (!isLogin && enteredEmail && enteredPassword) {

@@ -49,15 +49,16 @@ Don't forget to set an [environment variable](https://vercel.com/docs/concepts/p
 - Route Handlers
 - Authentication
 - Sessions
+- Password change
 
 ### In Progress
 
+- Navbar
 - Sign out
-- Password change
 
 ### Todo
 
-- Navbar
+- Notifications
 - Style
 - Roles
 - Admin page

@@ -28,3 +28,15 @@ export async function insertUser(email: string, password: string) {
   }
   return user[0];
 }
+
+export async function updateUserPassword(id: number, password: string) {
+  const user = await sql`
+    update users
+    set password = ${password}
+    where id = ${id}
+    returning *
+  `;
+  if (user.count === 0) {
+    throw new Error("Could not update user!");
+  }
+}
