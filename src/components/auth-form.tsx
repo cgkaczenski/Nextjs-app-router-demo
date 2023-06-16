@@ -24,12 +24,12 @@ async function createUser(email: String, password: String) {
 
 export default function AuthForm() {
   const router = useRouter();
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLoginUI, setIsLoginUI] = useState(true);
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
 
   function switchAuthModeHandler() {
-    setIsLogin((prevState) => !prevState);
+    setIsLoginUI((prevState) => !prevState);
   }
 
   async function submitHandler(event: any) {
@@ -37,7 +37,7 @@ export default function AuthForm() {
     const enteredEmail = emailInputRef.current?.value;
     const enteredPassword = passwordInputRef.current?.value;
 
-    if (isLogin) {
+    if (isLoginUI) {
       const result = await signIn("credentials", {
         redirect: false,
         email: enteredEmail,
@@ -48,7 +48,7 @@ export default function AuthForm() {
       }
     }
 
-    if (!isLogin && enteredEmail && enteredPassword) {
+    if (!isLoginUI && enteredEmail && enteredPassword) {
       try {
         const createResult = await createUser(enteredEmail, enteredPassword);
         console.log(createResult);
@@ -68,16 +68,16 @@ export default function AuthForm() {
 
   return (
     <section>
-      <h1>{isLogin ? "Login" : "Sign Up"}</h1>
+      <h1>{isLoginUI ? "Login" : "Sign Up"}</h1>
       <form onSubmit={submitHandler}>
         <label htmlFor="email">Email</label>
         <input id="email" type="email" required ref={emailInputRef} />
         <label htmlFor="password">Password</label>
         <input id="password" type="password" required ref={passwordInputRef} />
         <div>
-          <button>{isLogin ? "Login" : "Create Account"}</button>
+          <button>{isLoginUI ? "Login" : "Create Account"}</button>
           <button type="button" onClick={switchAuthModeHandler}>
-            {isLogin ? "Create new account" : "Login with existing account"}
+            {isLoginUI ? "Create new account" : "Login with existing account"}
           </button>
         </div>
       </form>

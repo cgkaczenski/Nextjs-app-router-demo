@@ -10,15 +10,9 @@ I am creating this repo as a learning demo, so I can learn this new mental model
 
 The live demo can be found [here](https://nextjs-app-router-demo.vercel.app/). The app has three pages for a home screen (unprotected), profile page for password change, and authform for signin and signup.
 
-## Plan
-
-I just want to learn how to do basic things using the app router. Adding done and todo sections at the bottom of this readme. To start, I'll just setup some basic auth with protected routes and user management. I notice that NextAuth has a (very) little [documentation](https://next-auth.js.org/configuration/initialization#route-handlers-app) about using [Route Handlers](https://nextjs.org/docs/app/building-your-application/routing/router-handlers) to get started. Another option is for getting started is [Supabase](https://supabase.com/docs/guides/auth/auth-helpers/nextjs#server-components). While I would like to use PostgreSQL hosted on Supabase or [Railway](https://railway.app), I am not sure if I want to sprinkle Supabase code throughout my app because I would like to make something that is not platform specific.
-
 ## Getting Started
 
-I've tested running this code locally on Mac (I'll learn docker one of these days...)
-
-First, create a new file in the root directory `.env`. NextAuth manages sessions and needs this one line `NEXTAUTH_SECRET=`. To generate the secret, NextAuth [recommends](https://next-auth.js.org/configuration/options#secret) using the command
+First, create a new file in the root directory `.env`. NextAuth manages sessions and needs this one line `NEXTAUTH_SECRET=xxxxxx`. To generate the secret, NextAuth [recommends](https://next-auth.js.org/configuration/options#secret) using the command
 
 ```bash
 openssl rand -base64 32
@@ -54,17 +48,18 @@ Don't forget to set an [environment variable](https://vercel.com/docs/concepts/p
 - Authentication
 - Sessions
 - Password change
-
-### In Progress
-
 - Navbar
 - Sign out
 
+### In Progress
+
+- Toast Notifications
+
 ### Todo
 
-- Notifications
 - Style
 - Config for dev vs production environments
+- Modal for signin
 - Roles
 - Admin page
 - User management
@@ -74,7 +69,8 @@ Don't forget to set an [environment variable](https://vercel.com/docs/concepts/p
 
 - The root layout replaces the \_app.js and \_document.js files. View the [migration guide](https://nextjs.org/docs/app/building-your-application/upgrading/app-router-migration#migrating-_documentjs-and-_appjs).
 - Route Handlers replace API Routes inside the pages directory meaning you do not need to use API Routes and Route Handlers together.
-- Next Links now automatically include the `<a>` tag, but you should still use tag when you want to force a server request to check the session.
 - Redirect function exists for redirecting in server components
 - For user interactivity, a client component must be used. `"use client";` can be written at the top of a client component, then "sprinkled" into the server component
 - API routes are a little different in app router, instead called [Route Handlers](https://nextjs.org/docs/app/building-your-application/routing/router-handlers). They export function called GET, POST, PUT, PATCH, DELETE, HEAD, and OPTIONS (which are the only supported HTTP Methods). If you want to return a response, need to import the NextResponse object.
+- ReactJs Context Providers can be wrapped in the main layout.tsx file. For more information read [this](https://nextjs.org/docs/getting-started/react-essentials#context). I ran into some problems trying to wrap the entire layout. I think it is because my Nav component is a server component, and providers can only wrap client components.
+- I was able to use NextAuth's client side useSession hook by wrapping just the client navbar in the Provider. Probably this would be easier to do if I just make the navbar %100 client side.
