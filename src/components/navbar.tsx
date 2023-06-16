@@ -13,16 +13,17 @@ export default function Navbar() {
   const { data: session, status } = useSession();
   const loading = status === "loading";
 
+  // Using Disclosure for the navbar menu because it is much faster than Menu
   return (
-    <header className="w-full shadow-md flex bg-sky-50 h-20 justify-between items-center px-12">
+    <header className="sticky top-0 w-full shadow-md flex bg-slate-50 h-20 justify-between items-center px-12">
       <Link href="/">
-        <div className="font-mono">Next Auth</div>
+        <div className="font-bold font-mono">Next.js Demo</div>
       </Link>
       <nav>
         <Disclosure as="nav" className="flex space-x-4">
           {!session && !loading && (
             <Disclosure.Button
-              className="rounded-md bg-black bg-opacity-20 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+              className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
               href={"/authform"}
               as={Link}
             >
@@ -31,7 +32,7 @@ export default function Navbar() {
           )}
           {session && (
             <Disclosure.Button
-              className="rounded-md bg-black bg-opacity-20 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+              className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
               href={"/profile"}
               as={Link}
             >
@@ -40,7 +41,7 @@ export default function Navbar() {
           )}
           {session && (
             <Disclosure.Button
-              className="rounded-md bg-black bg-opacity-20 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+              className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
               onClick={logoutHandler}
             >
               Logout
