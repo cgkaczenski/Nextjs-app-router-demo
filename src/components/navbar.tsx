@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
+import { Disclosure } from "@headlessui/react";
 
 export default function Navbar() {
   function logoutHandler() {
@@ -13,28 +14,39 @@ export default function Navbar() {
   const loading = status === "loading";
 
   return (
-    <header>
+    <header className="w-full shadow-md flex bg-sky-50 h-20 justify-between items-center px-12">
       <Link href="/">
-        <div>Next Auth</div>
+        <div className="font-mono">Next Auth</div>
       </Link>
       <nav>
-        <ul>
+        <Disclosure as="nav" className="flex space-x-4">
           {!session && !loading && (
-            <li>
-              <Link href="/authform">Login</Link>
-            </li>
+            <Disclosure.Button
+              className="rounded-md bg-black bg-opacity-20 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+              href={"/authform"}
+              as={Link}
+            >
+              Login
+            </Disclosure.Button>
           )}
           {session && (
-            <li>
-              <Link href="/profile">Profile</Link>
-            </li>
+            <Disclosure.Button
+              className="rounded-md bg-black bg-opacity-20 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+              href={"/profile"}
+              as={Link}
+            >
+              Profile
+            </Disclosure.Button>
           )}
           {session && (
-            <li>
-              <button onClick={logoutHandler}>Logout</button>
-            </li>
+            <Disclosure.Button
+              className="rounded-md bg-black bg-opacity-20 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+              onClick={logoutHandler}
+            >
+              Logout
+            </Disclosure.Button>
           )}
-        </ul>
+        </Disclosure>
       </nav>
     </header>
   );

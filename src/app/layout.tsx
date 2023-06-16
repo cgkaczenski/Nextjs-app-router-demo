@@ -1,4 +1,5 @@
 import MainNavigation from "./nav";
+import "./globals.css";
 
 export default async function RootLayout({
   children,
