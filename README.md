@@ -53,11 +53,11 @@ Don't forget to set an [environment variable](https://vercel.com/docs/concepts/p
 
 ### In Progress
 
+- Style
 - Toast Notifications
 
 ### Todo
 
-- Style
 - Config for dev vs production environments
 - Modal for signin
 - Roles
