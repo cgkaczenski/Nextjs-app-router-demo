@@ -16,13 +16,17 @@ I just want to learn how to do basic things using the app router. Adding done an
 
 ## Getting Started
 
-First, create a new file in the root directory `.env`. It just needs one line `NEXTAUTH_SECRET=xxxxxx`. To generate the secret, NextAuth [recommends](https://next-auth.js.org/configuration/options#secret) using the command
+I've tested running this code locally on Mac (I'll learn docker one of these days...)
+
+First, create a new file in the root directory `.env`. NextAuth manages sessions and needs this one line `NEXTAUTH_SECRET=`. To generate the secret, NextAuth [recommends](https://next-auth.js.org/configuration/options#secret) using the command
 
 ```bash
 openssl rand -base64 32
 ```
 
-Next, run the development server:
+Next, add another line to the `.env` file `DATABASE_URL=xxxxxx`. I've tested this using [Supabase](https://supabase.com/docs/guides/database/connecting-to-postgres) using the [Postgres.js](https://github.com/porsager/postgres) library, but it should work on any hosted Postgresql DB with an open port, so maybe I'll test it on [Railway](https://railway.app) soon. In Supabase, you can find the database url under the database's `Project Settings`, then go to `Connection string` and click the `URI` tab.
+
+Finally, run the development server:
 
 ```bash
 npx next dev
@@ -38,7 +42,7 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
-Don't forget to set an [environment variable](https://vercel.com/docs/concepts/projects/environment-variables) for `NEXTAUTH_SECRET` in your project.
+Don't forget to set an [environment variable](https://vercel.com/docs/concepts/projects/environment-variables) for `NEXTAUTH_SECRET` and `DATABASE_URL` in your project.
 
 ### Done
 
@@ -60,6 +64,7 @@ Don't forget to set an [environment variable](https://vercel.com/docs/concepts/p
 
 - Notifications
 - Style
+- Config for dev vs production environments
 - Roles
 - Admin page
 - User management
@@ -72,3 +77,4 @@ Don't forget to set an [environment variable](https://vercel.com/docs/concepts/p
 - Next Links now automatically include the `<a>` tag, but you should still use tag when you want to force a server request to check the session.
 - Redirect function exists for redirecting in server components
 - For user interactivity, a client component must be used. `"use client";` can be written at the top of a client component, then "sprinkled" into the server component
+- API routes are a little different in app router, instead called [Route Handlers](https://nextjs.org/docs/app/building-your-application/routing/router-handlers). They export function called GET, POST, PUT, PATCH, DELETE, HEAD, and OPTIONS (which are the only supported HTTP Methods). If you want to return a response, need to import the NextResponse object.
