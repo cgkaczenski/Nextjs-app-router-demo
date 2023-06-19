@@ -74,12 +74,14 @@ export default function AuthForm() {
             {isLoginUI ? "Login" : "Sign Up"}
           </h3>
           <p className="text-sm text-gray-500">
-            Create an account with your email and password
+            {isLoginUI
+              ? "Use your email and password to sign in"
+              : "Create an account with your email and password"}
           </p>
         </div>
         <form
           onSubmit={submitHandler}
-          className="flex flex-col space-y-4 bg-gray-50 px-4 py-8 sm:px-16"
+          className="flex flex-col space-y-4 bg-gray-50 px-4 py-4 sm:px-16"
         >
           <label
             htmlFor="email"
