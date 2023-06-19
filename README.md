@@ -50,20 +50,21 @@ Don't forget to set an [environment variable](https://vercel.com/docs/concepts/p
 - Password change
 - Navbar
 - Sign out
+- Style
 
 ### In Progress
 
-- Style
 - Toast Notifications
 
 ### Todo
 
 - Config for dev vs production environments
-- Modal for signin
+- Email
+- Deactivate account
+- Forgot password
 - Roles
 - Admin page
 - User management
-- Email
 
 ### Things I've learned
 
@@ -72,5 +73,4 @@ Don't forget to set an [environment variable](https://vercel.com/docs/concepts/p
 - Redirect function exists for redirecting in server components
 - For user interactivity, a client component must be used. `"use client";` can be written at the top of a client component, then "sprinkled" into the server component
 - API routes are a little different in app router, instead called [Route Handlers](https://nextjs.org/docs/app/building-your-application/routing/router-handlers). They export function called GET, POST, PUT, PATCH, DELETE, HEAD, and OPTIONS (which are the only supported HTTP Methods). If you want to return a response, need to import the NextResponse object.
-- ReactJs Context Providers can be wrapped in the main layout.tsx file. For more information read [this](https://nextjs.org/docs/getting-started/react-essentials#context). I ran into some problems trying to wrap the entire layout. I think it is because my Nav component is a server component, and providers can only wrap client components.
-- I was able to use NextAuth's client side useSession hook by wrapping just the client navbar in the Provider. Probably this would be easier to do if I just make the navbar 100% client side.
+- ReactJs Context Providers can be wrapped in the main layout.tsx file. For more information read [this](https://nextjs.org/docs/getting-started/react-essentials#context)

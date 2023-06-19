@@ -1,5 +1,6 @@
-import MainNavigation from "./nav";
 import "./globals.css";
+import Navbar from "@/components/navbar";
+import Provider from "@/components/provider";
 
 export default async function RootLayout({
   children,
@@ -9,8 +10,10 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body>
-        <MainNavigation />
-        {children}
+        <Provider>
+          <Navbar />
+          {children}
+        </Provider>
       </body>
     </html>
   );

@@ -47,12 +47,42 @@ export default function ProfileForm() {
 
   return (
     <section>
-      <form onSubmit={submitHandler}>
-        <label htmlFor="old-password">Old Password</label>
-        <input id="old-password" type="password" ref={oldPasswordRef} />
-        <label htmlFor="new-password">New Password</label>
-        <input id="new-password" type="password" ref={newPasswordRef} />
-        <button type="submit">Submit</button>
+      <form
+        onSubmit={submitHandler}
+        className="flex flex-col space-y-2 bg-gray-50 px-4 py-4 sm:px-16"
+      >
+        <label
+          htmlFor="old-password"
+          className="block text-xs text-gray-600 uppercase"
+        >
+          Current Password
+        </label>
+        <input
+          id="old-password"
+          type="password"
+          ref={oldPasswordRef}
+          className="mt-1 block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black sm:text-sm"
+        />
+        <label
+          htmlFor="new-password"
+          className="block text-xs text-gray-600 uppercase"
+        >
+          New Password
+        </label>
+        <input
+          id="new-password"
+          type="password"
+          ref={newPasswordRef}
+          className="mt-1 block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black sm:text-sm"
+        />
+        <div className="pt-2">
+          <button
+            type="submit"
+            className="border-black bg-black text-white hover:bg-white hover:text-black lex h-10 w-full items-center justify-center rounded-md border text-sm transition-all focus:outline-none "
+          >
+            Submit
+          </button>
+        </div>
       </form>
     </section>
   );

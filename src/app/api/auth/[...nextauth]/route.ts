@@ -38,9 +38,6 @@ export const authOptions: AuthOptions = {
       },
     }),
   ],
-  pages: {
-    signIn: "/authform",
-  },
   session: {
     strategy: "jwt",
   },

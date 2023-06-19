@@ -10,10 +10,8 @@ export default function Navbar() {
     signOut();
   }
 
-  const { data: session, status } = useSession();
-  const loading = status === "loading";
+  const { data: session } = useSession();
 
-  // Using Disclosure for the navbar menu because it is much faster than Menu
   return (
     <header className="sticky top-0 w-full shadow-md flex bg-slate-50 h-20 justify-between items-center px-12">
       <Link href="/">
@@ -21,14 +19,19 @@ export default function Navbar() {
       </Link>
       <nav>
         <Disclosure as="nav" className="flex space-x-4">
-          {!session && !loading && (
-            <Disclosure.Button
-              className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
-              href={"/authform"}
-              as={Link}
-            >
-              Login
-            </Disclosure.Button>
+          {!session && (
+            <section>
+              <Link href="/auth" className="px-4">
+                Sign in
+              </Link>
+              <Disclosure.Button
+                className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+                href={"/register"}
+                as={Link}
+              >
+                Get started today
+              </Disclosure.Button>
+            </section>
           )}
           {session && (
             <Disclosure.Button
