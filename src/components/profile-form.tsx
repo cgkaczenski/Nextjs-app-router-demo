@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 async function changeUserPassword(oldPassword: String, newPassword: String) {
   const response = await fetch("/api/auth/change-password", {
@@ -15,6 +16,7 @@ async function changeUserPassword(oldPassword: String, newPassword: String) {
   const data = await response.json();
 
   if (!response.ok) {
+    toast.error(data.error);
     throw new Error(data.error || "Something went wrong!");
   }
 
@@ -33,11 +35,8 @@ export default function ProfileForm() {
 
     if (enteredOldPassword && enteredNewPassword) {
       try {
-        const changeResult = await changeUserPassword(
-          enteredOldPassword,
-          enteredNewPassword
-        );
-        console.log(changeResult);
+        await changeUserPassword(enteredOldPassword, enteredNewPassword);
+        toast.success("Password changed successfully!");
         router.replace("/");
       } catch (error) {
         console.log(error);

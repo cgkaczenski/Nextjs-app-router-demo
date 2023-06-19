@@ -51,14 +51,14 @@ Don't forget to set an [environment variable](https://vercel.com/docs/concepts/p
 - Navbar
 - Sign out
 - Style
+- Toast Notifications
 
 ### In Progress
 
-- Toast Notifications
+- Config for dev vs production environments
 
 ### Todo
 
-- Config for dev vs production environments
 - Email
 - Deactivate account
 - Forgot password

@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import toast from "react-hot-toast";
 
 async function createUser(email: String, password: String) {
   const response = await fetch("/api/auth/signup", {
@@ -16,6 +17,7 @@ async function createUser(email: String, password: String) {
   const data = await response.json();
 
   if (!response.ok) {
+    toast.error(data.error);
     throw new Error(data.message || "Something went wrong!");
   }
 
@@ -44,7 +46,11 @@ export default function AuthForm(props: any) {
         password: enteredPassword,
       });
       if (!result?.error) {
+        toast.success("Logged in successfully!");
         router.replace("/");
+      }
+      if (result?.error) {
+        toast.error(result.error);
       }
     }
 
@@ -58,6 +64,7 @@ export default function AuthForm(props: any) {
           password: enteredPassword,
         });
         if (!signinResult?.error) {
+          toast.success("Account created successfully!");
           router.replace("/");
         }
       } catch (error) {
