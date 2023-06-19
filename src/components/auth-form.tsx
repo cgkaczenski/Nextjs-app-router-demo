@@ -67,20 +67,62 @@ export default function AuthForm() {
   }
 
   return (
-    <section>
-      <h1>{isLoginUI ? "Login" : "Sign Up"}</h1>
-      <form onSubmit={submitHandler}>
-        <label htmlFor="email">Email</label>
-        <input id="email" type="email" required ref={emailInputRef} />
-        <label htmlFor="password">Password</label>
-        <input id="password" type="password" required ref={passwordInputRef} />
-        <div>
-          <button>{isLoginUI ? "Login" : "Create Account"}</button>
-          <button type="button" onClick={switchAuthModeHandler}>
-            {isLoginUI ? "Create new account" : "Login with existing account"}
-          </button>
+    <div className="flex h-screen w-screen items-center justify-center bg-gray-50">
+      <div className="z-10 w-full max-w-md overflow-hidden rounded-2xl border border-gray-100 shadow-xl">
+        <div className="flex flex-col items-center justify-center space-y-3 border-b border-gray-200 bg-white px-4 py-6 pt-8 text-center sm:px-16">
+          <h3 className="text-xl font-semibold">
+            {isLoginUI ? "Login" : "Sign Up"}
+          </h3>
+          <p className="text-sm text-gray-500">
+            Create an account with your email and password
+          </p>
         </div>
-      </form>
-    </section>
+        <form
+          onSubmit={submitHandler}
+          className="flex flex-col space-y-4 bg-gray-50 px-4 py-8 sm:px-16"
+        >
+          <label
+            htmlFor="email"
+            className="block text-xs text-gray-600 uppercase"
+          >
+            Email
+          </label>
+          <input
+            id="email"
+            type="email"
+            required
+            ref={emailInputRef}
+            className="mt-1 block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black sm:text-sm"
+          />
+          <label
+            htmlFor="password"
+            className="block text-xs text-gray-600 uppercase"
+          >
+            Password
+          </label>
+          <input
+            id="password"
+            type="password"
+            required
+            ref={passwordInputRef}
+            className="mt-1 block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black sm:text-sm"
+          />
+          <div>
+            <button className="border-black bg-black text-white hover:bg-white hover:text-black lex h-10 w-full items-center justify-center rounded-md border text-sm transition-all focus:outline-none ">
+              {isLoginUI ? "Login" : "Create Account"}
+            </button>
+            <div className="flex items-center justify-center space-x-2 pt-4">
+              <button
+                type="button"
+                onClick={switchAuthModeHandler}
+                className="text-center text-sm text-gray-600"
+              >
+                {isLoginUI ? "Create new account" : "Already have an account?"}
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 }
