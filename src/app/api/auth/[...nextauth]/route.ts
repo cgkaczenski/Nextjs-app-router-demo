@@ -1,6 +1,6 @@
 import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { getUserQueryResult } from "@/lib/db";
+import { getUserByEmail } from "@/lib/db";
 import { verifyPassword } from "@/lib/auth";
 
 type User = {
@@ -21,7 +21,7 @@ export const authOptions: AuthOptions = {
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Invalid credentials");
         }
-        const userResult = await getUserQueryResult(credentials.email);
+        const userResult = await getUserByEmail(credentials.email);
         if (userResult.count === 0) {
           throw new Error("No user found!");
         }

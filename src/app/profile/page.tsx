@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
-import ProfileForm from "@/components/profile-form";
+import ProfileForm from "./profile-form";
 
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions);

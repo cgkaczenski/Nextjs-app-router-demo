@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/route";
 import { hashPassword, verifyPassword } from "@/lib/auth";
-import { getUserQueryResult, updateUserPassword } from "@/lib/db";
+import { getUserByEmail, updateUserPassword } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function PATCH(request: Request) {
@@ -15,7 +15,7 @@ export async function PATCH(request: Request) {
   console.log(email);
   const { oldPassword, newPassword } = body;
 
-  const userResult = await getUserQueryResult(email);
+  const userResult = await getUserByEmail(email);
   if (userResult.count === 0) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }

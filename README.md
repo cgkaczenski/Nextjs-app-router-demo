@@ -52,16 +52,17 @@ Don't forget to set an [environment variable](https://vercel.com/docs/concepts/p
 - Sign out
 - Style
 - Toast Notifications
+- Email integration
+- Forgot password
 
 ### In Progress
 
-- Config for dev vs production environments
+- Welcome email
 
 ### Todo
 
-- Email
 - Deactivate account
-- Forgot password
+- Config for dev vs production environments
 - Roles
 - Admin page
 - User management
@@ -74,3 +75,5 @@ Don't forget to set an [environment variable](https://vercel.com/docs/concepts/p
 - For user interactivity, a client component must be used. `"use client";` can be written at the top of a client component, then "sprinkled" into the server component
 - API routes are a little different in app router, instead called [Route Handlers](https://nextjs.org/docs/app/building-your-application/routing/router-handlers). They export function called GET, POST, PUT, PATCH, DELETE, HEAD, and OPTIONS (which are the only supported HTTP Methods). If you want to return a response, need to import the NextResponse object.
 - ReactJs Context Providers can be wrapped in the main layout.tsx file. For more information read [this](https://nextjs.org/docs/getting-started/react-essentials#context)
+- Event handlers cannot be passed to Client Component props.
+- [This](https://nextjs.org/docs/app/api-reference/file-conventions/page) is how you get url params in server components

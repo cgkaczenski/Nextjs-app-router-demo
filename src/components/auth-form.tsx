@@ -24,7 +24,7 @@ async function createUser(email: String, password: String) {
   return data;
 }
 
-export default function AuthForm(props: any) {
+export default function AuthForm(props: { isLoginUI: boolean }) {
   const router = useRouter();
   const [isLoginUI, setIsLoginUI] = useState(props.isLoginUI);
   const emailInputRef = useRef<HTMLInputElement>(null);
@@ -116,6 +116,16 @@ export default function AuthForm(props: any) {
             ref={passwordInputRef}
             className="mt-1 block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black sm:text-sm"
           />
+          {isLoginUI && (
+            <div className="text-sm">
+              <a
+                href="/forgot-password"
+                className="font-semibold text-black justify-end flex"
+              >
+                Forgot password?
+              </a>
+            </div>
+          )}
           <div className="py-4">
             <button className="border-black bg-black text-white hover:bg-white hover:text-black lex h-10 w-full items-center justify-center rounded-md border text-sm transition-all focus:outline-none">
               {isLoginUI ? "Sign In" : "Create account"}

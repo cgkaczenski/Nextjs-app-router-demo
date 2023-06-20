@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getUserQueryResult, insertUser } from "@/lib/db";
+import { getUserByEmail, insertUser } from "@/lib/db";
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     return;
   }
 
-  const existingUser = await getUserQueryResult(email);
+  const existingUser = await getUserByEmail(email);
   if (existingUser.count > 0) {
     return NextResponse.json({ error: "User already exists" }, { status: 422 });
   }
