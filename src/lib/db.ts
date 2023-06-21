@@ -1,7 +1,12 @@
 import postgres from "postgres";
 import { hashPassword } from "./auth";
 
-const sql = postgres(process.env.DATABASE_URL as string);
+const sql = postgres(process.env.DATABASE_URL as string, {
+  ssl: {
+    rejectUnauthorized: true,
+    ca: process.env.CA_CERT as string,
+  },
+});
 
 export async function getUserByEmail(email: string) {
   const userResult = await sql`
