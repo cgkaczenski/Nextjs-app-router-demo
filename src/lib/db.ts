@@ -1,10 +1,13 @@
 import postgres from "postgres";
 import { hashPassword } from "./auth";
+import tls from "tls";
 
 const sql = postgres(process.env.DATABASE_URL as string, {
   ssl: {
-    rejectUnauthorized: true,
-    ca: process.env.CA_CERT as string,
+    ca: Buffer.from(
+      process.env.DATABASE_SSL_CERT as string,
+      "base64"
+    ).toString(),
   },
 });
 

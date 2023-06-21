@@ -10,7 +10,7 @@ module.exports = (phase) => {
         ADMIN_EMAIL: process.env.ADMIN_EMAIL,
         BASE_URL: process.env.BASE_URL,
         JWT_SECRET: process.env.JWT_SECRET,
-        SSL_CERT: process.env.SSL_CERT,
+        DATABASE_SSL_CERT: process.env.DATABASE_SSL_CERT,
       },
     };
   }
@@ -23,7 +23,7 @@ module.exports = (phase) => {
       ADMIN_EMAIL: process.env.ADMIN_EMAIL,
       BASE_URL: "https://" + process.env.NEXT_PUBLIC_VERCEL_URL,
       JWT_SECRET: process.env.JWT_SECRET,
-      SSL_CERT: process.env.SSL_CERT,
+      DATABASE_SSL_CERT: process.env.DATABASE_SSL_CERT,
     },
   };
 };
