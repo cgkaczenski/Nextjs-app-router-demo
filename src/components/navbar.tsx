@@ -4,19 +4,38 @@ import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { Disclosure } from "@headlessui/react";
+import VerifyBanner from "./verify-banner";
+import { useState, useEffect } from "react";
+import { User } from "../../next-auth";
 
 export default function Navbar() {
+  const [isBannerShowing, setIsBannerShowing] = useState(false);
+  const { data: session } = useSession();
+  let user: User | null;
+  if (session) {
+    user = session.user as User;
+  }
+
   function logoutHandler() {
     signOut();
   }
 
-  const { data: session } = useSession();
+  function closeHandler() {
+    setIsBannerShowing(false);
+  }
+
+  useEffect(() => {
+    if (user && !user.isVerified) {
+      setIsBannerShowing(true);
+    }
+  }, [session]);
 
   return (
     <header className="sticky top-0 w-full shadow-md flex bg-slate-50 h-20 justify-between items-center px-12">
       <Link href="/">
         <div className="font-bold font-mono">Next.js Demo</div>
       </Link>
+      {isBannerShowing && <VerifyBanner onClickHandler={closeHandler} />}
       <nav>
         <Disclosure as="nav" className="flex space-x-4">
           {!session && (
