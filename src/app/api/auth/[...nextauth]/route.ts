@@ -2,12 +2,7 @@ import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { getUserByEmail } from "@/lib/db";
 import { verifyPassword } from "@/lib/auth";
-
-type User = {
-  id: string;
-  name: string;
-  email: string;
-};
+import { User } from "../../../../../next-auth";
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -34,12 +29,33 @@ export const authOptions: AuthOptions = {
           throw new Error("Could not log you in!");
         }
         //NextAuth requires a user to have name and email, so I pass email as both
-        return { id: user.id, name: user.email, email: user.email } as User;
+        return {
+          id: user.id,
+          name: user.email,
+          email: user.email,
+          isVerified: user.is_verified,
+        };
       },
     }),
   ],
   session: {
     strategy: "jwt",
+  },
+  callbacks: {
+    async session({ session, token }) {
+      session.user = {
+        name: token.name,
+        email: token.email,
+        isVerified: token.isVerified,
+      } as User;
+      return session;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.isVerified = user.isVerified;
+      }
+      return token;
+    },
   },
 };
 

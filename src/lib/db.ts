@@ -14,7 +14,7 @@ const sql = postgres(process.env.DATABASE_URL as string, {
 
 export async function getUserByEmail(email: string) {
   const userResult = await sql`
-    select id, email, password
+    select id, email, password, is_verified
     from users 
     where email = ${email}
   `;
@@ -23,7 +23,7 @@ export async function getUserByEmail(email: string) {
 
 export async function getUserById(id: string) {
   const userResult = await sql`
-    select id, email, password
+    select id, email, password, is_verified
     from users 
     where id = ${id}
   `;
