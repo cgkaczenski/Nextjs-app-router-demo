@@ -1,6 +1,5 @@
 import postgres from "postgres";
 import { hashPassword } from "./auth";
-import tls from "tls";
 
 const sql = postgres(process.env.DATABASE_URL as string, {
   ssl: {
@@ -9,6 +8,8 @@ const sql = postgres(process.env.DATABASE_URL as string, {
       "base64"
     ).toString(),
   },
+  idle_timeout: 20,
+  max_lifetime: 30 * 60,
 });
 
 export async function getUserByEmail(email: string) {
