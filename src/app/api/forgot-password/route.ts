@@ -3,6 +3,7 @@ import sgMail from "@sendgrid/mail";
 import jwt from "jsonwebtoken";
 import { getUserByEmail, getUserById, updateUserPassword } from "@/lib/db";
 import { hashPassword } from "@/lib/auth";
+import { sendResetEmail } from "@/lib/email";
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL as string;
 const BASE_URL = process.env.BASE_URL as string;
@@ -17,29 +18,12 @@ export async function POST(request: Request) {
   if (userResult.count === 0) {
     return NextResponse.json({ error: "Email not found" }, { status: 401 });
   }
-  const jwtPayload = {
-    user: {
-      id: userResult[0].id,
-    },
-  };
-  const secretKey = process.env.JWT_SECRET + userResult[0].password;
-  const token = jwt.sign(jwtPayload, secretKey, { expiresIn: "15m" });
-  const url = `${BASE_URL}/forgot-password/${userResult[0].id}/${token}`;
 
-  const text = "Please vist the following page to reset your password: " + url;
-  const html = `<p>Please reset your password <a href="${url}">here</a>.</p>
-  <p>This link will expire in 15 minutes.</p>
-  <p>If you did not request a password reset, please ignore this email.</p>`;
-
-  const msg = {
-    to: enteredEmail, // recipient email
-    from: ADMIN_EMAIL, // sender email
-    subject: "Reset your password",
-    text: text,
-    html: html,
-  };
-
-  const response = await sgMail.send(msg);
+  const response = await sendResetEmail(
+    userResult[0].id,
+    userResult[0].password,
+    userResult[0].email
+  );
 
   if (response[0].statusCode !== 202) {
     return NextResponse.json({ error: response }, { status: 401 });

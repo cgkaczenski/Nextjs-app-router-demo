@@ -58,3 +58,15 @@ export async function updateUserPassword(id: number, password: string) {
     throw new Error("Could not update user!");
   }
 }
+
+export async function verifyUser(id: number) {
+  const user = await sql`
+    update users
+    set is_verified = TRUE
+    where id = ${id}
+    returning *
+  `;
+  if (user.count === 0) {
+    throw new Error("Could not update user!");
+  }
+}

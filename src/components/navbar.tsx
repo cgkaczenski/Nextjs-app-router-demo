@@ -10,11 +10,8 @@ import { User } from "../../next-auth";
 
 export default function Navbar() {
   const [isBannerShowing, setIsBannerShowing] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
   const { data: session } = useSession();
-  let user: User | null;
-  if (session) {
-    user = session.user as User;
-  }
 
   function logoutHandler() {
     signOut();
@@ -25,10 +22,16 @@ export default function Navbar() {
   }
 
   useEffect(() => {
-    if (user && !user.isVerified) {
-      setIsBannerShowing(true);
+    if (session && session.user) {
+      const user = session.user as User;
+      setIsVerified(user.isVerified);
+      if (!isVerified) {
+        setIsBannerShowing(true);
+      } else {
+        setIsBannerShowing(false);
+      }
     }
-  }, [session]);
+  }, [session, isVerified]);
 
   return (
     <header className="sticky top-0 w-full shadow-md flex bg-slate-50 h-20 justify-between items-center px-12">

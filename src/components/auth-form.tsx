@@ -15,13 +15,12 @@ async function createUser(email: String, password: String) {
   });
 
   const data = await response.json();
-
   if (!response.ok) {
     toast.error(data.error);
     throw new Error(data.message || "Something went wrong!");
   }
 
-  return data;
+  return;
 }
 
 export default function AuthForm(props: { isLoginUI: boolean }) {
@@ -56,8 +55,7 @@ export default function AuthForm(props: { isLoginUI: boolean }) {
 
     if (!isLoginUI && enteredEmail && enteredPassword) {
       try {
-        const createResult = await createUser(enteredEmail, enteredPassword);
-        console.log(createResult);
+        await createUser(enteredEmail, enteredPassword);
         const signinResult = await signIn("credentials", {
           redirect: false,
           email: enteredEmail,

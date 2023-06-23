@@ -1,6 +1,6 @@
 import ResetPasswordForm from "./reset-password-form";
 
-export default async function ExampleClientComponent({
+export default async function PasswordResetPage({
   params,
 }: {
   params: { userId: string; token: string };

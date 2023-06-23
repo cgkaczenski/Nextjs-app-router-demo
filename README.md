@@ -54,15 +54,15 @@ Don't forget to set an [environment variable](https://vercel.com/docs/concepts/p
 - Toast Notifications
 - Email integration
 - Forgot password
-
-### In Progress
-
 - Email verification
 - Welcome email
 
-### Todo
+### In Progress
 
 - Deactivate account
+
+### Todo
+
 - Config for dev vs production environments
 - Roles
 - Admin page
@@ -78,3 +78,4 @@ Don't forget to set an [environment variable](https://vercel.com/docs/concepts/p
 - ReactJs Context Providers can be wrapped in the main layout.tsx file. For more information read [this](https://nextjs.org/docs/getting-started/react-essentials#context)
 - Event handlers cannot be passed to Client Component props.
 - [This](https://nextjs.org/docs/app/api-reference/file-conventions/page) is how you get url params in server components
+- You can't use relative URLs from the server side
