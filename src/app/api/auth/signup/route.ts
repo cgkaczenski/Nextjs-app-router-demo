@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
-import { getUserByEmail, getUserById, insertUser } from "@/lib/db";
+import postgresDb from "@/lib/db";
 import { sendVerificationEmail } from "@/lib/email";
 import jwt from "jsonwebtoken";
-import { verifyUser } from "@/lib/db";
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -18,7 +17,7 @@ export async function POST(request: Request) {
     return;
   }
 
-  const existingUser = await getUserByEmail(email);
+  const existingUser = await postgresDb.getUserByEmail(email);
   if (existingUser.count > 0) {
     return NextResponse.json(
       {
@@ -28,7 +27,7 @@ export async function POST(request: Request) {
       { status: 422 }
     );
   }
-  const user = await insertUser(email, password);
+  const user = await postgresDb.insertUser(email, password);
   const response = await sendVerificationEmail(
     user.id,
     user.password,
@@ -47,7 +46,7 @@ export async function PATCH(request: Request) {
   const { userId, token } = body;
   let userResult;
   try {
-    userResult = await getUserById(userId);
+    userResult = await postgresDb.getUserById(userId);
     if (userResult.count === 0) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
@@ -65,7 +64,7 @@ export async function PATCH(request: Request) {
   const secretKey = process.env.JWT_SECRET + user.password;
   try {
     jwt.verify(token, secretKey);
-    await verifyUser(userId);
+    await postgresDb.verifyUser(userId);
     return NextResponse.json({ message: "User Verified" }, { status: 200 });
   } catch (err: any) {
     console.log("ERROR!!!:", err);

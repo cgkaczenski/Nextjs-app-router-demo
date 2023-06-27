@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import sgMail from "@sendgrid/mail";
 import jwt from "jsonwebtoken";
-import { getUserByEmail, getUserById, updateUserPassword } from "@/lib/db";
+import postgresDb from "@/lib/db";
 import { hashPassword } from "@/lib/auth";
 import { sendResetEmail } from "@/lib/email";
 
@@ -14,7 +14,7 @@ export async function POST(request: Request) {
   const body = await request.json();
   const { enteredEmail } = body;
 
-  const userResult = await getUserByEmail(enteredEmail);
+  const userResult = await postgresDb.getUserByEmail(enteredEmail);
   if (userResult.count === 0) {
     return NextResponse.json({ error: "Email not found" }, { status: 401 });
   }
@@ -37,7 +37,7 @@ export async function PATCH(request: Request) {
   const { userId, token, newPassword } = body;
   let userResult;
   try {
-    userResult = await getUserById(userId);
+    userResult = await postgresDb.getUserById(userId);
     if (userResult.count === 0) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
@@ -50,7 +50,7 @@ export async function PATCH(request: Request) {
   try {
     jwt.verify(token, secretKey);
     const hashedPassword = await hashPassword(newPassword);
-    await updateUserPassword(userId, hashedPassword);
+    await postgresDb.updateUserPassword(userId, hashedPassword);
     return NextResponse.json({ message: "Password updated" }, { status: 200 });
   } catch (err: any) {
     if (err.message === "jwt expired") {
