@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { Disclosure } from "@headlessui/react";
 import VerifyBanner from "./verify-banner";
 import { useState, useEffect } from "react";
-import { User } from "../../next-auth";
+import { User } from "@/services/user";
 
 export default function Navbar() {
   const [isBannerShowing, setIsBannerShowing] = useState(false);

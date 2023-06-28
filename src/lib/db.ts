@@ -1,5 +1,4 @@
 import postgres from "postgres";
-//import { User } from "../../next-auth";
 
 export interface Database {
   // Todo: these should return a user instead
