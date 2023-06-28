@@ -1,21 +1,20 @@
 import postgres from "postgres";
-import { hashPassword } from "./auth";
 //import { User } from "../../next-auth";
 
-interface Database {
+export interface Database {
   // Todo: these should return a user instead
   getUserByEmail(email: string): Promise<postgres.RowList<postgres.Row[]>>;
-  getUserByEmail(id: string): Promise<postgres.RowList<postgres.Row[]>>;
+  getUserById(id: string): Promise<postgres.RowList<postgres.Row[]>>;
   // Todo: this should take a user as param instead
   insertUser(email: string, password: string): Promise<postgres.Row>;
-  updateUserPassword(id: number, password: string): Promise<void>;
-  verifyUser(id: number): Promise<void>;
+  updateUserPassword(id: string, password: string): Promise<void>;
+  verifyUser(id: string): Promise<void>;
 }
 
 class postgresDatabase implements Database {
   sql: postgres.Sql<{}>;
 
-  constructor(private connectionString: string, private ssl: string) {
+  constructor(connectionString: string, ssl: string) {
     this.sql = postgres(connectionString, {
       ssl: {
         ca: Buffer.from(ssl, "base64").toString(),
@@ -44,12 +43,11 @@ class postgresDatabase implements Database {
   }
 
   async insertUser(email: string, password: string) {
-    const hashedPassword = await hashPassword(password);
     const user = await this.sql`
       insert into users (
         email, password
       ) values (
-        ${email}, ${hashedPassword}
+        ${email}, ${password}
       )
 
       returning *
@@ -60,7 +58,7 @@ class postgresDatabase implements Database {
     return user[0];
   }
 
-  async updateUserPassword(id: number, password: string) {
+  async updateUserPassword(id: string, password: string) {
     const user = await this.sql`
       update users
       set password = ${password}
@@ -71,7 +69,7 @@ class postgresDatabase implements Database {
     }
   }
 
-  async verifyUser(id: number) {
+  async verifyUser(id: string) {
     const user = await this.sql`
       update users
       set is_verified = true
@@ -83,9 +81,9 @@ class postgresDatabase implements Database {
   }
 }
 
-const postgresDb = new postgresDatabase(
+const db = new postgresDatabase(
   process.env.DATABASE_URL as string,
   process.env.DATABASE_SSL_CERT as string
 );
 
-export default postgresDb;
+export default db;

@@ -1,8 +1,8 @@
 import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import postgresDb from "@/lib/db";
-import { verifyPassword } from "@/lib/auth";
-import { User } from "../../../../../next-auth";
+import db from "@/lib/db";
+import { hashPassword, verifyPassword } from "@/lib/auth";
+import { User } from "@/services/user";
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -16,7 +16,7 @@ export const authOptions: AuthOptions = {
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Invalid credentials");
         }
-        const userResult = await postgresDb.getUserByEmail(credentials.email);
+        const userResult = await db.getUserByEmail(credentials.email);
         if (userResult.count === 0) {
           throw new Error("No user found!");
         }

@@ -8,10 +8,3 @@ declare module "next-auth" {
     isVerified: boolean;
   }
 }
-
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-  isVerified: boolean;
-}

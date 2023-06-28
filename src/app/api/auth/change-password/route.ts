@@ -1,9 +1,9 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/route";
-import { hashPassword, verifyPassword } from "@/lib/auth";
-import postgresDb from "@/lib/db";
 import { NextResponse } from "next/server";
+import userService from "@/services/user";
 
+// change password if session and old password are valid
 export async function PATCH(request: Request) {
   const session = await getServerSession(authOptions);
   if (!session) {
@@ -12,21 +12,13 @@ export async function PATCH(request: Request) {
 
   const body = await request.json();
   const email = session.user?.email as string;
-  console.log(email);
   const { oldPassword, newPassword } = body;
 
-  const userResult = await postgresDb.getUserByEmail(email);
-  if (userResult.count === 0) {
-    return NextResponse.json({ error: "User not found" }, { status: 404 });
-  }
-  const user = userResult[0];
-
-  const passwordsMatch = await verifyPassword(oldPassword, user.password);
-  if (!passwordsMatch) {
-    return NextResponse.json({ error: "Invalid password" }, { status: 401 });
+  try {
+    await userService.changePassword(email, oldPassword, newPassword);
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 400 });
   }
 
-  const hashedPassword = await hashPassword(newPassword);
-  await postgresDb.updateUserPassword(user.id, hashedPassword);
   return NextResponse.json({ message: "Password updated" }, { status: 200 });
 }

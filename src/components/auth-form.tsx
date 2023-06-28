@@ -20,7 +20,7 @@ async function createUser(email: String, password: String) {
     throw new Error(data.message || "Something went wrong!");
   }
 
-  return;
+  return data;
 }
 
 export default function AuthForm(props: { isLoginUI: boolean }) {
@@ -49,18 +49,20 @@ export default function AuthForm(props: { isLoginUI: boolean }) {
         router.replace("/");
       }
       if (result?.error) {
+        console.log(result.error);
         toast.error(result.error);
       }
     }
 
     if (!isLoginUI && enteredEmail && enteredPassword) {
       try {
-        await createUser(enteredEmail, enteredPassword);
+        const result = await createUser(enteredEmail, enteredPassword);
         const signinResult = await signIn("credentials", {
           redirect: false,
           email: enteredEmail,
           password: enteredPassword,
         });
+        console.log(signinResult);
         if (!signinResult?.error) {
           toast.success("Account created successfully!");
           router.replace("/");
