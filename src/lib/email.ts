@@ -36,17 +36,13 @@ export async function sendResetEmail(
   return await sgMail.send(msg);
 }
 
-export async function sendVerificationEmail(
-  userId: string,
-  userPassword: string,
-  toEmail: string
-) {
+export async function sendVerificationEmail(userId: string, toEmail: string) {
   const jwtPayload = {
     user: {
       id: userId,
     },
   };
-  const secretKey = process.env.JWT_SECRET + userPassword;
+  const secretKey = process.env.JWT_SECRET + userId;
   const token = jwt.sign(jwtPayload, secretKey);
   const url = `${BASE_URL}/verify-user/${userId}/${token}`;
 

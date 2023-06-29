@@ -2,11 +2,11 @@ import postgres from "postgres";
 import { User } from "@/services/user";
 
 export interface Database {
-  getUserByEmail(email: string): Promise<User>;
-  getUserById(id: string): Promise<User>;
-  insertUser(email: string, password: string): Promise<User>;
+  getUserByEmail(email: string): Promise<User | null>;
+  getUserById(id: string): Promise<User | null>;
+  insertUser(email: string): Promise<User>;
   updateUserPassword(id: string, password: string): Promise<void>;
-  verifyUser(id: string): Promise<void>;
+  verifyUser(id: string, password: string): Promise<void>;
 }
 
 class postgresDatabase implements Database {
@@ -39,7 +39,7 @@ class postgresDatabase implements Database {
       where email = ${email}
     `;
     if (userResult.count === 0) {
-      throw new Error("User not found");
+      return null;
     }
     return this.convertRowToUser(userResult[0]);
   }
@@ -51,25 +51,25 @@ class postgresDatabase implements Database {
       where id = ${id}
     `;
     if (userResult.count === 0) {
-      throw new Error("User not found");
+      return null;
     }
     return this.convertRowToUser(userResult[0]);
   }
 
-  async insertUser(email: string, password: string) {
-    const user = await this.sql`
+  async insertUser(email: string) {
+    const userResult = await this.sql`
       insert into users (
-        email, password
+        email
       ) values (
-        ${email}, ${password}
+        ${email}
       )
 
       returning *
     `;
-    if (user.count === 0) {
+    if (userResult.count === 0) {
       throw new Error("Could not insert user!");
     }
-    return this.convertRowToUser(user);
+    return this.convertRowToUser(userResult[0]);
   }
 
   async updateUserPassword(id: string, password: string) {
@@ -83,10 +83,10 @@ class postgresDatabase implements Database {
     }
   }
 
-  async verifyUser(id: string) {
+  async verifyUser(id: string, password: string) {
     const user = await this.sql`
       update users
-      set is_verified = true
+      set is_verified = true, password = ${password}
       where id = ${id}
     `;
     if (user.count === 0) {

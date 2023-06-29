@@ -17,6 +17,9 @@ export const authOptions: AuthOptions = {
           throw new Error("Invalid credentials");
         }
         const user = await db.getUserByEmail(credentials.email);
+        if (!user) {
+          throw new Error("Could not find user");
+        }
         const isValid = await verifyPassword(
           credentials.password,
           user.password

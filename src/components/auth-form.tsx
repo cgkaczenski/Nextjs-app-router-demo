@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import toast from "react-hot-toast";
 
-async function createUser(email: String, password: String) {
+async function createUser(email: String) {
   const response = await fetch("/api/auth/signup", {
     method: "POST",
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email }),
     headers: {
       "Content-Type": "application/json",
     },
@@ -54,19 +54,11 @@ export default function AuthForm(props: { isLoginUI: boolean }) {
       }
     }
 
-    if (!isLoginUI && enteredEmail && enteredPassword) {
+    if (!isLoginUI && enteredEmail) {
       try {
-        const result = await createUser(enteredEmail, enteredPassword);
-        const signinResult = await signIn("credentials", {
-          redirect: false,
-          email: enteredEmail,
-          password: enteredPassword,
-        });
-        console.log(signinResult);
-        if (!signinResult?.error) {
-          toast.success("Account created successfully!");
-          router.replace("/");
-        }
+        await createUser(enteredEmail);
+        toast.success("Please check your email to activate your account.");
+        router.replace("/");
       } catch (error) {
         console.log(error);
       }
@@ -83,7 +75,7 @@ export default function AuthForm(props: { isLoginUI: boolean }) {
           <p className="text-sm text-gray-500">
             {isLoginUI
               ? "Use your email and password to sign in"
-              : "Create an account with your email and password"}
+              : "Enter your email, and we will send you a confirmation email to activate your account."}
           </p>
         </div>
         <form
@@ -103,19 +95,23 @@ export default function AuthForm(props: { isLoginUI: boolean }) {
             ref={emailInputRef}
             className="mt-1 block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black sm:text-sm"
           />
-          <label
-            htmlFor="password"
-            className="block text-xs text-gray-600 uppercase pt-2"
-          >
-            Password
-          </label>
-          <input
-            id="password"
-            type="password"
-            required
-            ref={passwordInputRef}
-            className="mt-1 block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black sm:text-sm"
-          />
+          {isLoginUI && (
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-xs text-gray-600 uppercase pt-2"
+              >
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                required
+                ref={passwordInputRef}
+                className="mt-1 block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black sm:text-sm"
+              />
+            </div>
+          )}
           {isLoginUI && (
             <div className="text-sm">
               <a

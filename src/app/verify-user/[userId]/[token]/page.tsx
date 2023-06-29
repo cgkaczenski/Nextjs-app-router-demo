@@ -1,58 +1,102 @@
 "use client";
 
-import { signOut, useSession } from "next-auth/react";
-import Link from "next/link";
+import { useRef } from "react";
+import { toast } from "react-hot-toast";
+import { useParams, useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
-export default async function UserVerificationPage({
-  params,
-}: {
-  params: { userId: string; token: string };
-}) {
-  const { userId, token } = params;
-  const { data: session } = useSession();
-  const response = await fetch(process.env.BASE_URL + "/api/auth/signup", {
-    method: "PATCH",
-    body: JSON.stringify({
-      userId: userId,
-      token: token,
-    }),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+export default async function UserVerificationPage() {
+  const { userId, token } = useParams();
+  const passwordInputRef = useRef<HTMLInputElement>(null);
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
-  if (response.ok && session) {
-    // Sign out the user if they are signed in
-    //, so they can sign in again with verified email
-    signOut();
+  async function submitHandler(event: any) {
+    event.preventDefault();
+    const enteredEmail = emailInputRef.current?.value;
+    const enteredPassword = passwordInputRef.current?.value;
+    const response = await fetch(process.env.BASE_URL + "/api/auth/signup", {
+      method: "PATCH",
+      body: JSON.stringify({
+        userId: userId,
+        token: token,
+        password: enteredPassword,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (response.ok) {
+      console.log("enteredEmail", enteredEmail);
+      const result = await signIn("credentials", {
+        redirect: false,
+        email: enteredEmail,
+        password: enteredPassword,
+      });
+      if (!result?.error) {
+        toast.success("Account activated!");
+        router.replace("/");
+      } else {
+        toast.error(result.error);
+      }
+    }
+    if (!response.ok) {
+      const data = await response.json();
+      toast.error(data.error);
+    }
   }
 
   return (
     <div className="flex">
-      {response.ok ? (
-        <div className="w-screen h-screen flex flex-col justify-center items-center">
-          <div className="text-center max-w-screen-sm mb-10">
-            <h1 className="font-bold ">Success!</h1>
-            <p>You have successfully verified your account.</p>
-            <p>
-              Please click{" "}
-              <Link href="/auth" className="text-blue-300">
-                here{" "}
-              </Link>
-              to sign in to your verified account.
+      <div className="flex h-screen w-screen items-center justify-center bg-gray-50">
+        <div className="z-10 w-full max-w-md overflow-hidden rounded-2xl border border-gray-100 shadow-xl">
+          <div className="flex flex-col items-center justify-center space-y-3 border-b border-gray-200 bg-white px-4 py-6 pt-8 text-center sm:px-16">
+            <h3 className="text-xl font-semibold">Password setup</h3>
+            <p className="text-sm text-gray-500">
+              Please enter your email and a password to finish setting up your
+              account.
             </p>
           </div>
+          <form
+            onSubmit={submitHandler}
+            className="flex flex-col bg-gray-50 px-4 py-4 sm:px-16"
+          >
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-xs text-gray-600 uppercase pt-2"
+              >
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                required
+                ref={emailInputRef}
+                className="mt-1 block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black sm:text-sm"
+              />
+              <label
+                htmlFor="password"
+                className="block text-xs text-gray-600 uppercase pt-2"
+              >
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                required
+                ref={passwordInputRef}
+                className="mt-1 block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black sm:text-sm"
+              />
+            </div>
+            <div className="py-4">
+              <button className="border-black bg-black text-white hover:bg-white hover:text-black lex h-10 w-full items-center justify-center rounded-md border text-sm transition-all focus:outline-none">
+                Save Password
+              </button>
+            </div>
+          </form>
         </div>
-      ) : (
-        <div className="w-screen h-screen flex flex-col justify-center items-center">
-          <div className="text-center max-w-screen-sm mb-10">
-            <h1 className="font-bold ">Error!</h1>
-            <p>
-              We were unable to verifiy your account. Please contact support.
-            </p>
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 }
