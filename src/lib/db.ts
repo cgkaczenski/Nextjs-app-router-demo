@@ -1,11 +1,10 @@
 import postgres from "postgres";
+import { User } from "@/services/user";
 
 export interface Database {
-  // Todo: these should return a user instead
-  getUserByEmail(email: string): Promise<postgres.RowList<postgres.Row[]>>;
-  getUserById(id: string): Promise<postgres.RowList<postgres.Row[]>>;
-  // Todo: this should take a user as param instead
-  insertUser(email: string, password: string): Promise<postgres.Row>;
+  getUserByEmail(email: string): Promise<User>;
+  getUserById(id: string): Promise<User>;
+  insertUser(email: string, password: string): Promise<User>;
   updateUserPassword(id: string, password: string): Promise<void>;
   verifyUser(id: string): Promise<void>;
 }
@@ -23,13 +22,26 @@ class postgresDatabase implements Database {
     });
   }
 
+  convertRowToUser(row: postgres.Row) {
+    return {
+      id: row.id,
+      name: row.email,
+      email: row.email,
+      password: row.password,
+      isVerified: row.is_verified,
+    } as User;
+  }
+
   async getUserByEmail(email: string) {
     const userResult = await this.sql`
       select id, email, password, is_verified
       from users 
       where email = ${email}
     `;
-    return userResult;
+    if (userResult.count === 0) {
+      throw new Error("User not found");
+    }
+    return this.convertRowToUser(userResult[0]);
   }
 
   async getUserById(id: string) {
@@ -38,7 +50,10 @@ class postgresDatabase implements Database {
       from users 
       where id = ${id}
     `;
-    return userResult;
+    if (userResult.count === 0) {
+      throw new Error("User not found");
+    }
+    return this.convertRowToUser(userResult[0]);
   }
 
   async insertUser(email: string, password: string) {
@@ -54,7 +69,7 @@ class postgresDatabase implements Database {
     if (user.count === 0) {
       throw new Error("Could not insert user!");
     }
-    return user[0];
+    return this.convertRowToUser(user);
   }
 
   async updateUserPassword(id: string, password: string) {

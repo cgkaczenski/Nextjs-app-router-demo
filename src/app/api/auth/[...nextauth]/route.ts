@@ -16,11 +16,7 @@ export const authOptions: AuthOptions = {
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Invalid credentials");
         }
-        const userResult = await db.getUserByEmail(credentials.email);
-        if (userResult.count === 0) {
-          throw new Error("No user found!");
-        }
-        const user = userResult[0];
+        const user = await db.getUserByEmail(credentials.email);
         const isValid = await verifyPassword(
           credentials.password,
           user.password
@@ -33,7 +29,7 @@ export const authOptions: AuthOptions = {
           id: user.id,
           name: user.email,
           email: user.email,
-          isVerified: user.is_verified,
+          isVerified: user.isVerified,
         };
       },
     }),

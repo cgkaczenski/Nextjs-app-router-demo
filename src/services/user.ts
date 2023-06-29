@@ -4,9 +4,10 @@ import { hashPassword, verifyPassword } from "@/lib/auth";
 import jwt from "jsonwebtoken";
 
 export interface User {
-  id: number;
+  id: string;
   name: string;
   email: string;
+  password: string;
   isVerified: boolean;
 }
 
@@ -18,16 +19,9 @@ class UserService {
   }
 
   async sendPasswordResetEmail(email: string): Promise<void> {
-    const userResult = await this.database.getUserByEmail(email);
-    if (userResult.count === 0) {
-      throw new Error("User not found");
-    }
+    const user = await this.database.getUserByEmail(email);
 
-    const response = await sendResetEmail(
-      userResult[0].id,
-      userResult[0].password,
-      userResult[0].email
-    );
+    const response = await sendResetEmail(user.id, user.password, user.email);
 
     if (response[0].statusCode !== 202) {
       throw new Error(response[0].toString());
@@ -39,11 +33,7 @@ class UserService {
     password: string,
     token: string
   ): Promise<void> {
-    const userResult = await this.database.getUserById(id);
-    if (userResult.count === 0) {
-      throw new Error("User not found");
-    }
-    const user = userResult[0];
+    const user = await this.database.getUserById(id);
     const secretKey = process.env.JWT_SECRET + user.password;
 
     try {
@@ -63,12 +53,7 @@ class UserService {
     oldPassword: string,
     newPassword: string
   ): Promise<void> {
-    const userResult = await this.database.getUserByEmail(email);
-    if (userResult.count === 0) {
-      throw new Error("User not found");
-    }
-    const user = userResult[0];
-
+    const user = await this.database.getUserByEmail(email);
     const passwordsMatch = await verifyPassword(oldPassword, user.password);
     if (!passwordsMatch) {
       throw new Error("Invalid password");
@@ -80,7 +65,7 @@ class UserService {
 
   async registerUser(email: string, password: string): Promise<User> {
     const existingUser = await this.database.getUserByEmail(email);
-    if (existingUser.count > 0) {
+    if (existingUser) {
       throw new Error("User already exists");
     }
     const hashedPassword = await hashPassword(password);
@@ -99,11 +84,7 @@ class UserService {
   }
 
   async verifyUser(id: string, token: string): Promise<void> {
-    const userResult = await this.database.getUserById(id);
-    if (userResult.count === 0) {
-      throw new Error("User not found");
-    }
-    const user = userResult[0];
+    const user = await this.database.getUserById(id);
     const secretKey = process.env.JWT_SECRET + user.password;
 
     try {
