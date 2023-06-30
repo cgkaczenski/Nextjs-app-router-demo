@@ -36,6 +36,15 @@ export default function Navbar() {
           {session && (
             <Disclosure.Button
               className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+              href={"/dashboard"}
+              as={Link}
+            >
+              Dashboard
+            </Disclosure.Button>
+          )}
+          {session && (
+            <Disclosure.Button
+              className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
               href={"/profile"}
               as={Link}
             >
