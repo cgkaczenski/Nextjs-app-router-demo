@@ -1,11 +1,26 @@
 import Link from "next/link";
 
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toLocaleString();
+};
+
+const formatValue = (value: any, dataType: string) => {
+  if (dataType === "boolean") {
+    return value.toString();
+  }
+  if (dataType === "datetime") {
+    return formatDate(value);
+  }
+  return value;
+};
+
 export default function DataTable(prop: {
-  columnNames: string[];
+  columns: { label: string; data_type: string }[];
   data: any[];
   link?: boolean;
 }) {
-  const { columnNames, data, link } = prop;
+  const { columns, data, link } = prop;
 
   return (
     <div className="flex flex-col">
@@ -15,13 +30,13 @@ export default function DataTable(prop: {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  {columnNames.map((columnName, index) => (
+                  {columns.map((column, index) => (
                     <th
                       key={index}
                       scope="col"
                       className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                     >
-                      {columnName}
+                      {column.label}
                     </th>
                   ))}
                 </tr>
@@ -30,21 +45,21 @@ export default function DataTable(prop: {
                 {data.length > 0 ? (
                   data.map((row, rowIndex) => (
                     <tr key={rowIndex}>
-                      {columnNames.map((columnName, colIndex) => (
+                      {columns.map((column, colIndex) => (
                         <td
                           key={colIndex}
                           className="px-6 py-4 whitespace-nowrap"
                         >
-                          {link && columnName === "link" ? (
-                            <a
-                              href={row[columnName]}
+                          {link && column.label === "link" ? (
+                            <Link
+                              href={row[column.label]}
                               className="text-sm text-blue-600 hover:text-blue-900"
                             >
-                              {row[columnName]}
-                            </a>
+                              {row[column.label]}
+                            </Link>
                           ) : (
                             <div className="text-sm text-gray-900">
-                              {row[columnName]}
+                              {formatValue(row[column.label], column.data_type)}
                             </div>
                           )}
                         </td>
@@ -54,7 +69,7 @@ export default function DataTable(prop: {
                 ) : (
                   <tr>
                     <td
-                      colSpan={columnNames.length}
+                      colSpan={columns.length}
                       className="px-6 py-4 text-center text-sm text-gray-500"
                     >
                       There is no data in this table

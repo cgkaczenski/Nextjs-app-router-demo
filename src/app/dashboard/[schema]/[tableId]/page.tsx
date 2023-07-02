@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import { authOptions } from "../../../api/auth/[...nextauth]/route";
 import DataTable from "@/components/datatable";
+import { type } from "os";
 
 export default async function TablePage({
   params,
@@ -26,7 +27,6 @@ export default async function TablePage({
     }
   );
 
-  const data = await response.json();
-  const columnNames = data.length > 0 ? Object.keys(data[0]) : [];
-  return <DataTable columnNames={columnNames} data={data} />;
+  const jsonData = await response.json();
+  return <DataTable columns={jsonData.metadata.columns} data={jsonData.data} />;
 }

@@ -27,7 +27,6 @@ export default async function UserVerificationPage() {
       },
     });
     if (response.ok) {
-      console.log("enteredEmail", enteredEmail);
       const result = await signIn("credentials", {
         redirect: false,
         email: enteredEmail,

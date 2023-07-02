@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
 import db from "@/lib/db";
 
-interface Columns {
+interface MetaData {
   table_name: string;
-  column_name: string;
+  columns: Columns[];
+}
+
+interface Columns {
+  label: string;
   data_type: string;
 }
 
@@ -12,16 +16,15 @@ export async function GET(
   { params }: { params: { id: number } }
 ) {
   const result = await db.getAllColumns(params.id);
-  // Todo: add this to a meta field in the response, and get the column names
-  // from this instead of from the datatable.
+  const tableName = result[0].table_name;
   const columns: Columns[] = result.map((row) => {
     return {
-      table_name: row.table_name,
-      column_name: row.column_name,
+      label: row.column_name,
       data_type: row.data_type,
     };
   });
-  const tableName = columns[0].table_name;
+  const metadata: MetaData = { table_name: tableName, columns: columns };
   const data = await db.getTableData(tableName);
-  return NextResponse.json(data, { status: 200 });
+  const response = { metadata, data };
+  return NextResponse.json(response, { status: 200 });
 }

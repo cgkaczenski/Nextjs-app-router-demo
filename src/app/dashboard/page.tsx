@@ -10,13 +10,6 @@ export default async function DashboardPage() {
     redirect("/auth");
   }
 
-  function addLink(data: any[]) {
-    return data.map((item) => ({
-      ...item,
-      link: `/dashboard/${item.schema}/${item.id}`,
-    }));
-  }
-
   const response = await fetch(process.env.BASE_URL + "/api/tables", {
     method: "GET",
     headers: {
@@ -25,8 +18,12 @@ export default async function DashboardPage() {
     cache: "no-cache",
   });
 
-  let data = await response.json();
-  data = addLink(data);
-  const columnNames = data.length > 0 ? Object.keys(data[0]) : [];
-  return <DataTable columnNames={columnNames} data={data} link={true} />;
+  const jsonData = await response.json();
+  return (
+    <DataTable
+      columns={jsonData.metadata.columns}
+      data={jsonData.data}
+      link={true}
+    />
+  );
 }

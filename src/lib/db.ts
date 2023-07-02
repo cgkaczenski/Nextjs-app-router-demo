@@ -94,6 +94,18 @@ class postgresDatabase implements Database {
     }
   }
 
+  transformDataType(data: any) {
+    return data.map((item: any) => {
+      if (item.data_type === "boolean") {
+        return item;
+      } else if (item.data_type === "timestamp with time zone") {
+        return { ...item, data_type: "datetime" };
+      } else {
+        return { ...item, data_type: "string" };
+      }
+    });
+  }
+
   async getAllTables() {
     const tables = await this.sql`
     SELECT
@@ -120,7 +132,6 @@ class postgresDatabase implements Database {
   }
 
   async getTableData(tableName: string) {
-    console.log("tableName", tableName);
     const data = await this.sql`
     select * from ${this.sql(tableName)}
   `;
@@ -128,7 +139,7 @@ class postgresDatabase implements Database {
   }
 
   async getAllColumns(tableId: number) {
-    const columns = await this.sql`
+    let columns = await this.sql`
     SELECT 
         c.relname AS table_name,
         a.attname AS column_name, 
@@ -146,6 +157,7 @@ class postgresDatabase implements Database {
     ORDER BY 
         a.attnum;
   `;
+    columns = this.transformDataType(columns);
     return columns;
   }
 }
