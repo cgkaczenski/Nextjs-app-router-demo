@@ -1,8 +1,7 @@
 "use client";
 
-import { getServerSession } from "next-auth/next";
-import { redirect } from "next/navigation";
-import { authOptions } from "../../../api/auth/[...nextauth]/route";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import DataTable from "@/components/datatable";
 
 const addEditableFlag = (columns: any[]): any[] => {
@@ -19,10 +18,11 @@ export default async function TablePage({
 }: {
   params: { tableId: string };
 }) {
-  const session = await getServerSession(authOptions);
+  const router = useRouter();
+  const { data: session } = useSession();
 
   if (!session) {
-    redirect("/auth");
+    router.push("/auth");
   }
 
   const { tableId } = params;
@@ -41,5 +41,9 @@ export default async function TablePage({
   if (jsonData.metadata.table_name === "user") {
     jsonData.metadata.columns = addEditableFlag(jsonData.metadata.columns);
   }
-  return <DataTable columns={jsonData.metadata.columns} data={jsonData.data} />;
+  return (
+    session && (
+      <DataTable columns={jsonData.metadata.columns} data={jsonData.data} />
+    )
+  );
 }
