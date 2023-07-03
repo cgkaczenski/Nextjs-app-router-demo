@@ -95,12 +95,12 @@ export default function DataTable(prop: {
                             className="px-6 py-4 whitespace-nowrap"
                           >
                             {link && column.label === "link" ? (
-                              <a
+                              <Link
                                 href={row[column.label]}
                                 className="text-sm text-blue-600 hover:text-blue-900"
                               >
                                 {row[column.label]}
-                              </a>
+                              </Link>
                             ) : (
                               <div>
                                 {column.isEditable ? (
