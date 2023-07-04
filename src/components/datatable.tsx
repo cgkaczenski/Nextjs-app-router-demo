@@ -22,9 +22,13 @@ const formatValue = (value: any, dataType: string) => {
 export default function DataTable(prop: {
   columns: { label: string; data_type: string; isEditable?: boolean }[];
   data: Record<string, any>[];
-  link?: boolean;
+  links?: {
+    column_name: string;
+    matching_key: string;
+    links: { label: string; href: string }[];
+  };
 }) {
-  const { columns, link } = prop;
+  const { columns, links } = prop;
   let { data } = prop;
   const [resetKey, setResetKey] = useState(0);
   const [saveKey, setSaveKey] = useState(0);
@@ -94,31 +98,38 @@ export default function DataTable(prop: {
                             key={colIndex}
                             className="px-6 py-4 whitespace-nowrap"
                           >
-                            {link && column.label === "link" ? (
-                              <Link
-                                href={row[column.label]}
-                                className="text-sm text-blue-600 hover:text-blue-900"
-                              >
-                                {row[column.label]}
-                              </Link>
+                            {column.isEditable ? (
+                              <EditableCell
+                                resetKey={resetKey}
+                                saveKey={saveKey}
+                                value={row[column.label]}
+                                onEdit={(newValue) =>
+                                  handleEdit(row.id, column.label, newValue)
+                                }
+                              />
                             ) : (
-                              <div>
-                                {column.isEditable ? (
-                                  <EditableCell
-                                    resetKey={resetKey}
-                                    saveKey={saveKey}
-                                    value={row[column.label]}
-                                    onEdit={(newValue) =>
-                                      handleEdit(row.id, column.label, newValue)
+                              <div className="text-sm text-gray-900">
+                                {links && column.label === links.column_name ? (
+                                  (() => {
+                                    const linkObj = links.links.find(
+                                      (link) =>
+                                        link.label === row[links.matching_key]
+                                    );
+                                    if (linkObj) {
+                                      return (
+                                        <Link
+                                          href={linkObj.href}
+                                          className="text-blue-400"
+                                        >
+                                          {row[column.label]}
+                                        </Link>
+                                      );
+                                    } else {
+                                      return <p>{row[column.label]}</p>;
                                     }
-                                  />
+                                  })()
                                 ) : (
-                                  <div className="text-sm text-gray-900">
-                                    {formatValue(
-                                      row[column.label],
-                                      column.data_type
-                                    )}
-                                  </div>
+                                  <p>{row[column.label]}</p>
                                 )}
                               </div>
                             )}

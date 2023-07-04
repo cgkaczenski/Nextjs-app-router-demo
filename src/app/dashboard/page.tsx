@@ -19,11 +19,16 @@ export default async function DashboardPage() {
   });
 
   const jsonData = await response.json();
+  const links = {
+    column_name: "id",
+    matching_key: "name",
+    links: jsonData.metadata.links as { label: string; href: string }[],
+  };
   return (
     <DataTable
       columns={jsonData.metadata.columns}
       data={jsonData.data}
-      link={true}
+      links={links}
     />
   );
 }
