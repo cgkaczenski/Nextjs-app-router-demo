@@ -35,11 +35,13 @@ export default function EditableCell(prop: {
   useEffect(() => {
     setInputValue(originalValue);
     setUnsavedChanges(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resetKey]);
 
   useEffect(() => {
     setOriginalValue(inputValue);
     setUnsavedChanges(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [saveKey]);
 
   return isEditing ? (
