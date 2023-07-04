@@ -18,7 +18,7 @@ export default async function Table(props: any) {
       headers: {
         "Content-Type": "application/json",
       },
-      cache: "no-cache",
+      cache: "no-store",
     }
   );
 
