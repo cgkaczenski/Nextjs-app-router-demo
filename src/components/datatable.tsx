@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
 import EditableCell from "./editable-cell";
 
 const formatDate = (dateString: string) => {
@@ -116,12 +117,13 @@ export default function DataTable(prop: {
                                     );
                                     if (linkObj) {
                                       return (
-                                        <a
+                                        <Link
                                           href={linkObj.href}
                                           className="text-blue-400"
+                                          prefetch={false}
                                         >
                                           {row[column.label]}
-                                        </a>
+                                        </Link>
                                       );
                                     } else {
                                       return <p>{row[column.label]}</p>;

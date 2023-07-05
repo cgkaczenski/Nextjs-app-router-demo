@@ -79,3 +79,4 @@ Don't forget to set an [environment variable](https://vercel.com/docs/concepts/p
 - Event handlers cannot be passed to Client Component props.
 - [This](https://nextjs.org/docs/app/api-reference/file-conventions/page) is how you get url params in server components
 - You can't use relative URLs from the server side
+- [<Link>](https://nextjs.org/docs/app/api-reference/components/link) tags will be prefetched, which will cause a crash if you are loading data for a lot of links at once. This can be disabled using `prefetch={false}` prop

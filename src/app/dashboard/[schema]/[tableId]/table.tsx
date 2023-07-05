@@ -1,4 +1,5 @@
 "use client";
+
 import DataTable from "@/components/datatable";
 
 const addEditableFlag = (columns: any[]): any[] => {
