@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState, useEffect, use } from "react";
 import EditableCell from "./editable-cell";
 
@@ -117,12 +116,12 @@ export default function DataTable(prop: {
                                     );
                                     if (linkObj) {
                                       return (
-                                        <Link
+                                        <a
                                           href={linkObj.href}
                                           className="text-blue-400"
                                         >
                                           {row[column.label]}
-                                        </Link>
+                                        </a>
                                       );
                                     } else {
                                       return <p>{row[column.label]}</p>;
