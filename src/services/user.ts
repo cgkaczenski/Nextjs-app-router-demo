@@ -1,5 +1,5 @@
-import db, { Database } from "@/lib/db";
-import { sendResetEmail, sendVerificationEmail } from "@/lib/email";
+import db from "@/lib/db";
+import { sendResetEmail, sendVerificationEmail } from "@/services/email";
 import { hashPassword, verifyPassword } from "@/lib/auth";
 import jwt from "jsonwebtoken";
 
@@ -11,15 +11,26 @@ export interface User {
   isVerified: boolean;
 }
 
-class UserService {
-  database: Database;
+export interface UserRepository {
+  findById(id: string): Promise<User | null>;
+  findByEmail(email: string): Promise<User | null>;
+  create(email: string): Promise<User>;
+  update(user: User): Promise<User>;
+}
 
-  constructor(database: Database) {
+class UserService {
+  database: UserRepository;
+
+  constructor(database: UserRepository) {
     this.database = database;
   }
 
+  getUserByEmail(email: string): Promise<User | null> {
+    return this.database.findByEmail(email);
+  }
+
   async sendPasswordResetEmail(email: string): Promise<void> {
-    const user = await this.database.getUserByEmail(email);
+    const user = await this.database.findByEmail(email);
     if (!user) {
       throw new Error("Could not find user");
     }
@@ -35,7 +46,7 @@ class UserService {
     password: string,
     token: string
   ): Promise<void> {
-    const user = await this.database.getUserById(id);
+    const user = await this.database.findById(id);
     if (!user) {
       throw new Error("Could not find user");
     }
@@ -44,7 +55,8 @@ class UserService {
     try {
       jwt.verify(token, secretKey);
       const hashedPassword = await hashPassword(password);
-      await this.database.updateUserPassword(id, hashedPassword);
+      user.password = hashedPassword;
+      await this.database.update(user);
     } catch (err: any) {
       if (err.message === "jwt expired") {
         throw new Error("Token expired");
@@ -58,7 +70,7 @@ class UserService {
     oldPassword: string,
     newPassword: string
   ): Promise<void> {
-    const user = await this.database.getUserByEmail(email);
+    const user = await this.database.findByEmail(email);
     if (!user) {
       throw new Error("Could not find user");
     }
@@ -68,15 +80,16 @@ class UserService {
     }
 
     const hashedPassword = await hashPassword(newPassword);
-    await this.database.updateUserPassword(user.id, hashedPassword);
+    user.password = hashedPassword;
+    await this.database.update(user);
   }
 
   async registerUser(email: string): Promise<User> {
-    const existingUser = await this.database.getUserByEmail(email);
+    const existingUser = await this.database.findByEmail(email);
     if (existingUser) {
       throw new Error("User already exists");
     }
-    const user = await this.database.insertUser(email);
+    const user = await this.database.create(email);
     const response = await sendVerificationEmail(user.id, email);
 
     if (response[0].statusCode !== 202) {
@@ -88,7 +101,7 @@ class UserService {
 
   async verifyUser(id: string, token: string, password: string): Promise<void> {
     try {
-      const user = await this.database.getUserById(id);
+      const user = await this.database.findById(id);
       if (!user) {
         throw new Error("Could not find user");
       }
@@ -98,7 +111,8 @@ class UserService {
       const secretKey = process.env.JWT_SECRET + id;
       jwt.verify(token, secretKey);
       const hashedPassword = await hashPassword(password);
-      await this.database.verifyUser(id, hashedPassword);
+      user.password = hashedPassword;
+      await this.database.update(user);
     } catch (err: any) {
       if (err.message === "jwt expired") {
         throw new Error("Token expired");

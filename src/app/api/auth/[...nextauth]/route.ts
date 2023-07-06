@@ -1,8 +1,7 @@
 import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import db from "@/lib/db";
 import { verifyPassword } from "@/lib/auth";
-import { User } from "@/services/user";
+import userService, { User } from "@/services/user";
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -16,7 +15,7 @@ export const authOptions: AuthOptions = {
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Invalid credentials");
         }
-        const user = await db.getUserByEmail(credentials.email);
+        const user = await userService.getUserByEmail(credentials.email);
         if (!user) {
           throw new Error("Could not find user");
         }

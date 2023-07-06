@@ -1,15 +1,7 @@
 import postgres from "postgres";
-import { User } from "@/services/user";
+import { User, UserRepository } from "@/services/user";
 
-export interface Database {
-  getUserByEmail(email: string): Promise<User | null>;
-  getUserById(id: string): Promise<User | null>;
-  insertUser(email: string): Promise<User>;
-  updateUserPassword(id: string, password: string): Promise<void>;
-  verifyUser(id: string, password: string): Promise<void>;
-}
-
-class postgresDatabase implements Database {
+class postgresDatabase implements UserRepository {
   sql: postgres.Sql<{}>;
 
   constructor(connectionString: string, ssl: string) {
@@ -32,19 +24,7 @@ class postgresDatabase implements Database {
     } as User;
   }
 
-  async getUserByEmail(email: string) {
-    const userResult = await this.sql`
-      select id, email, password, is_verified
-      from system.users 
-      where email = ${email}
-    `;
-    if (userResult.count === 0) {
-      return null;
-    }
-    return this.convertRowToUser(userResult[0]);
-  }
-
-  async getUserById(id: string) {
+  async findById(id: string) {
     const userResult = await this.sql`
       select id, email, password, is_verified
       from system.users 
@@ -56,7 +36,19 @@ class postgresDatabase implements Database {
     return this.convertRowToUser(userResult[0]);
   }
 
-  async insertUser(email: string) {
+  async findByEmail(email: string) {
+    const userResult = await this.sql`
+      select id, email, password, is_verified
+      from system.users 
+      where email = ${email}
+    `;
+    if (userResult.count === 0) {
+      return null;
+    }
+    return this.convertRowToUser(userResult[0]);
+  }
+
+  async create(email: string) {
     const userResult = await this.sql`
       insert into system.users (
         email
@@ -72,26 +64,18 @@ class postgresDatabase implements Database {
     return this.convertRowToUser(userResult[0]);
   }
 
-  async updateUserPassword(id: string, password: string) {
-    const user = await this.sql`
+  async update(user: User): Promise<User> {
+    const userResult = await this.sql`
       update system.users
-      set password = ${password}
-      where id = ${id}
+      set password = ${user.password}, is_verified = ${user.isVerified}
+      where id = ${user.id}
+
+      returning *
     `;
-    if (user.count === 0) {
+    if (userResult.count === 0) {
       throw new Error("Could not update user!");
     }
-  }
-
-  async verifyUser(id: string, password: string) {
-    const user = await this.sql`
-      update system.users
-      set is_verified = true, password = ${password}
-      where id = ${id}
-    `;
-    if (user.count === 0) {
-      throw new Error("Could not verify user!");
-    }
+    return this.convertRowToUser(userResult[0]);
   }
 
   transformDataType(data: any) {
