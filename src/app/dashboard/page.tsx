@@ -1,4 +1,5 @@
 import { getServerSession } from "next-auth/next";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import DataTable from "@/components/datatable";
@@ -14,6 +15,7 @@ export default async function DashboardPage() {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
+      Cookie: cookies().toString(),
     },
     cache: "no-cache",
   });
