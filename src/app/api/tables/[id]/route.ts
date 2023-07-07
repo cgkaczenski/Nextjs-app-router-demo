@@ -16,6 +16,10 @@ export async function GET(
 }
 
 export async function PUT(request: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const body = await request.json();
   try {
     await tableService.updateRowsByMap(body);
