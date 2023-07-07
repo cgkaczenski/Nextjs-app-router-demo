@@ -27,8 +27,9 @@ export default function DataTable(prop: {
     matching_key: string;
     links: { label: string; href: string }[];
   };
+  onSave?: (changes: Record<string, any>) => Promise<boolean | undefined>;
 }) {
-  const { columns, links } = prop;
+  const { columns, links, onSave } = prop;
   let { data } = prop;
   const [resetKey, setResetKey] = useState(0);
   const [saveKey, setSaveKey] = useState(0);
@@ -49,17 +50,21 @@ export default function DataTable(prop: {
     setUnsavedChanges(true);
   }
 
-  function handleSave() {
-    //Todo: Save changes to db
-    console.log("Saving changes to DB...", localChanges);
-    data = data.map((row) => {
-      if (localChanges[row.id]) {
-        return { ...row, ...localChanges[row.id] };
+  async function handleSave() {
+    if (typeof onSave === "function") {
+      const isSuccessful = await onSave(localChanges);
+
+      if (isSuccessful) {
+        data = data.map((row) => {
+          if (localChanges[row.id]) {
+            return { ...row, ...localChanges[row.id] };
+          }
+          return row;
+        });
+        setUnsavedChanges(false);
+        setSaveKey(saveKey + 1);
       }
-      return row;
-    });
-    setUnsavedChanges(false);
-    setSaveKey(saveKey + 1);
+    }
   }
 
   function handleCancel() {

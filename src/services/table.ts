@@ -8,15 +8,21 @@ export interface TableList {
 
 export interface Table {
   tableMetadata: {
+    id: number;
     table_name: string;
     columns: { label: string; data_type: string }[];
   };
   data: {}[];
 }
 
+export interface RowMap {
+  [key: string]: { id: string; [key: string]: string | number | boolean };
+}
+
 export interface TableRepository {
   findAllTables(): Promise<TableList[]>;
   findTableById(id: number): Promise<Table>;
+  updateRowsByMap(rowMap: RowMap): Promise<void>;
 }
 
 class TableService {
@@ -39,6 +45,14 @@ class TableService {
     const data = await this.getAllTables();
     const metadata = this.generateTableListMetadata(data);
     return { metadata, data };
+  }
+
+  public async updateRowsByMap(rows: RowMap): Promise<void> {
+    try {
+      await this.database.updateRowsByMap(rows);
+    } catch (error) {
+      throw new Error(`Failed to update users: ${error}`);
+    }
   }
 
   private async getAllTables(): Promise<TableList[]> {

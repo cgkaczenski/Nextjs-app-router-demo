@@ -1,6 +1,6 @@
 import postgres from "postgres";
 import { User, UserRepository } from "@/services/user";
-import { TableList, Table, TableRepository } from "@/services/table";
+import { TableList, Table, RowMap, TableRepository } from "@/services/table";
 
 class postgresDatabase implements UserRepository, TableRepository {
   sql: postgres.Sql<{}>;
@@ -17,7 +17,7 @@ class postgresDatabase implements UserRepository, TableRepository {
     this.transformer = new DataTransformer();
   }
 
-  async findById(id: string) {
+  public async findById(id: string) {
     const userResult = await this.sql`
       select id, email, password, is_verified
       from system.users 
@@ -29,7 +29,7 @@ class postgresDatabase implements UserRepository, TableRepository {
     return this.transformer.convertRowToUser(userResult[0]);
   }
 
-  async findByEmail(email: string) {
+  public async findByEmail(email: string) {
     const userResult = await this.sql`
       select id, email, password, is_verified
       from system.users 
@@ -41,7 +41,7 @@ class postgresDatabase implements UserRepository, TableRepository {
     return this.transformer.convertRowToUser(userResult[0]);
   }
 
-  async create(email: string) {
+  public async create(email: string) {
     const userResult = await this.sql`
       insert into system.users (
         email
@@ -57,7 +57,7 @@ class postgresDatabase implements UserRepository, TableRepository {
     return this.transformer.convertRowToUser(userResult[0]);
   }
 
-  async update(user: User): Promise<User> {
+  public async update(user: User): Promise<User> {
     const userResult = await this.sql`
       update system.users
       set password = ${user.password}, is_verified = ${user.isVerified}
@@ -71,7 +71,7 @@ class postgresDatabase implements UserRepository, TableRepository {
     return this.transformer.convertRowToUser(userResult[0]);
   }
 
-  async findAllTables(): Promise<TableList[]> {
+  public async findAllTables(): Promise<TableList[]> {
     const tables = await this.sql`
     SELECT
       c.oid :: int8 AS id,
@@ -106,6 +106,32 @@ class postgresDatabase implements UserRepository, TableRepository {
     return table;
   }
 
+  public async updateRowsByMap(rows: RowMap): Promise<void> {
+    try {
+      await this.sql.begin(async (sql) => {
+        for (const rowKey in rows) {
+          const row = rows[rowKey];
+
+          const updates: { [key: string]: string | number | boolean } = {};
+
+          for (const key in row) {
+            if (key !== "id") {
+              updates[key] = row[key];
+            }
+          }
+
+          if (Object.keys(updates).length > 0) {
+            await sql`UPDATE public.user SET ${sql(updates)} WHERE id = ${
+              row.id
+            }`;
+          }
+        }
+      });
+    } catch (error) {
+      throw new Error("Could not update rows!");
+    }
+  }
+
   private async getTableData(tableName: string): Promise<{}[]> {
     const data = await this.sql`
     select * from ${this.sql(tableName)}
@@ -114,6 +140,7 @@ class postgresDatabase implements UserRepository, TableRepository {
   }
 
   private async getTableMetadata(tableId: number): Promise<{
+    id: number;
     table_name: string;
     columns: { label: string; data_type: string }[];
   }> {
@@ -136,7 +163,7 @@ class postgresDatabase implements UserRepository, TableRepository {
         a.attnum;
   `;
     columns = this.transformer.transformDataType(columns);
-    return this.transformer.convertRowsToTableMetadata(columns);
+    return this.transformer.convertRowsToTableMetadata(tableId, columns);
   }
 }
 
@@ -161,11 +188,16 @@ class DataTransformer {
     });
   }
 
-  convertRowsToTableMetadata(rows: postgres.Row[]): {
+  convertRowsToTableMetadata(
+    id: number,
+    rows: postgres.Row[]
+  ): {
+    id: number;
     table_name: string;
     columns: { label: string; data_type: string }[];
   } {
     return {
+      id: id,
       table_name: rows[0].table_name,
       columns: this.convertRowsToColumnMetadata(rows),
     };
