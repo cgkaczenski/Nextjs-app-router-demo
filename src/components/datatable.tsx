@@ -126,11 +126,23 @@ export default function DataTable(prop: {
                                         </Link>
                                       );
                                     } else {
-                                      return <p>{row[column.label]}</p>;
+                                      return (
+                                        <p>
+                                          {formatValue(
+                                            row[column.label],
+                                            column.data_type
+                                          )}
+                                        </p>
+                                      );
                                     }
                                   })()
                                 ) : (
-                                  <p>{row[column.label]}</p>
+                                  <p>
+                                    {formatValue(
+                                      row[column.label],
+                                      column.data_type
+                                    )}
+                                  </p>
                                 )}
                               </div>
                             )}

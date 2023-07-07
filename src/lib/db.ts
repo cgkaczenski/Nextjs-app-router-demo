@@ -1,8 +1,10 @@
 import postgres from "postgres";
 import { User, UserRepository } from "@/services/user";
+import { TableList, TableRepository } from "@/services/table";
 
-class postgresDatabase implements UserRepository {
+class postgresDatabase implements UserRepository, TableRepository {
   sql: postgres.Sql<{}>;
+  transformer: DataTransformer;
 
   constructor(connectionString: string, ssl: string) {
     this.sql = postgres(connectionString, {
@@ -12,16 +14,7 @@ class postgresDatabase implements UserRepository {
       idle_timeout: 20,
       max_lifetime: 30 * 60,
     });
-  }
-
-  convertRowToUser(row: postgres.Row) {
-    return {
-      id: row.id,
-      name: row.email,
-      email: row.email,
-      password: row.password,
-      isVerified: row.is_verified,
-    } as User;
+    this.transformer = new DataTransformer();
   }
 
   async findById(id: string) {
@@ -33,7 +26,7 @@ class postgresDatabase implements UserRepository {
     if (userResult.count === 0) {
       return null;
     }
-    return this.convertRowToUser(userResult[0]);
+    return this.transformer.convertRowToUser(userResult[0]);
   }
 
   async findByEmail(email: string) {
@@ -45,7 +38,7 @@ class postgresDatabase implements UserRepository {
     if (userResult.count === 0) {
       return null;
     }
-    return this.convertRowToUser(userResult[0]);
+    return this.transformer.convertRowToUser(userResult[0]);
   }
 
   async create(email: string) {
@@ -61,7 +54,7 @@ class postgresDatabase implements UserRepository {
     if (userResult.count === 0) {
       throw new Error("Could not insert user!");
     }
-    return this.convertRowToUser(userResult[0]);
+    return this.transformer.convertRowToUser(userResult[0]);
   }
 
   async update(user: User): Promise<User> {
@@ -75,22 +68,10 @@ class postgresDatabase implements UserRepository {
     if (userResult.count === 0) {
       throw new Error("Could not update user!");
     }
-    return this.convertRowToUser(userResult[0]);
+    return this.transformer.convertRowToUser(userResult[0]);
   }
 
-  transformDataType(data: any) {
-    return data.map((item: any) => {
-      if (item.data_type === "boolean") {
-        return item;
-      } else if (item.data_type === "timestamp with time zone") {
-        return { ...item, data_type: "datetime" };
-      } else {
-        return { ...item, data_type: "string" };
-      }
-    });
-  }
-
-  async getAllTables() {
+  async findAllTables() {
     const tables = await this.sql`
     SELECT
       c.oid :: int8 AS id,
@@ -112,7 +93,7 @@ class postgresDatabase implements UserRepository {
         OR has_any_column_privilege(c.oid, 'SELECT, INSERT, UPDATE, REFERENCES')
       )
     `;
-    return tables;
+    return this.transformer.convertRowsToTableMetadata(tables);
   }
 
   async getTableData(tableName: string) {
@@ -141,8 +122,42 @@ class postgresDatabase implements UserRepository {
     ORDER BY 
         a.attnum;
   `;
-    columns = this.transformDataType(columns);
+    columns = this.transformer.transformDataType(columns);
     return columns;
+  }
+}
+
+class DataTransformer {
+  convertRowToUser(row: postgres.Row): User {
+    return {
+      id: row.id,
+      name: row.email,
+      email: row.email,
+      password: row.password,
+      isVerified: row.is_verified,
+    } as User;
+  }
+
+  convertRowsToTableMetadata(rows: postgres.Row[]): TableList[] {
+    return rows.map((row) => {
+      return {
+        id: row.id,
+        schema: row.schema,
+        name: row.name,
+      } as TableList;
+    });
+  }
+
+  transformDataType(data: any): any {
+    return data.map((item: any) => {
+      if (item.data_type === "boolean") {
+        return item;
+      } else if (item.data_type === "timestamp with time zone") {
+        return { ...item, data_type: "datetime" };
+      } else {
+        return { ...item, data_type: "string" };
+      }
+    });
   }
 }
 
