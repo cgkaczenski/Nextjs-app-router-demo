@@ -51,6 +51,7 @@ export default function DataTable(prop: {
   }
 
   async function handleSave() {
+    console.log("handleSave: ", localChanges);
     if (typeof onSave === "function") {
       const isSuccessful = await onSave(localChanges);
 
@@ -68,6 +69,7 @@ export default function DataTable(prop: {
   }
 
   function handleCancel() {
+    setLocalChanges({});
     setUnsavedChanges(false);
     setResetKey(resetKey + 1);
   }
