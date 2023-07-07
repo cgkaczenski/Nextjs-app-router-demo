@@ -51,7 +51,6 @@ export default function DataTable(prop: {
   }
 
   async function handleSave() {
-    console.log("handleSave: ", localChanges);
     if (typeof onSave === "function") {
       const isSuccessful = await onSave(localChanges);
 
