@@ -8,17 +8,33 @@ I am creating this repo as a learning demo, so I can learn this new mental model
 
 ## Live demo
 
-The live demo can be found [here](https://nextjs-app-router-demo.vercel.app/). The app has three pages for a home screen (unprotected), profile page for password change, and authform for signin and signup.
+The live demo can be found [here](https://nextjs-app-router-demo.vercel.app/).
 
-## Getting Started
+## Getting Started - Local Development
 
-First, create a new file in the root directory `.env`. NextAuth manages sessions and needs this one line `NEXTAUTH_SECRET=xxxxxx`. To generate the secret, NextAuth [recommends](https://next-auth.js.org/configuration/options#secret) using the command
+First, create a new file in the root directory `.env`. I have provided a .env.template file you can use as a guide.
+
+To generate the NEXTAUTH_SECRET, NextAuth [recommends](https://next-auth.js.org/configuration/options#secret) using the command
 
 ```bash
 openssl rand -base64 32
 ```
 
-Next, add another line to the `.env` file `DATABASE_URL=xxxxxx`. I've tested this using [Supabase](https://supabase.com/docs/guides/database/connecting-to-postgres) using the [Postgres.js](https://github.com/porsager/postgres) library, but it should work on any hosted Postgresql DB with an open port, so maybe I'll test it on [Railway](https://railway.app) soon. In Supabase, you can find the database url under the database's `Project Settings`, then go to `Connection string` and click the `URI` tab.
+You can use the same command to generate a JWT_SECRET as well.
+
+For the DATABASE_URL, I've tested this using [Supabase](https://supabase.com/docs/guides/database/connecting-to-postgres) using the [Postgres.js](https://github.com/porsager/postgres) library, but it should work on any hosted Postgresql DB with an open port. In Supabase, you can find the database url under the database's `Project Settings`, then go to `Connection string` and click the `URI` tab.
+
+The SENDGRID_API_KEY, is found easily under `Settings` and `API Keys`. SendGrid Recommends use also navigate to `Sender Authentication` and authorize a single sender during development.
+
+ADMIN_EMAIL is the email you want SendGrid to use when sending users registration or password reset emails. Keep in mind that the emails will all go to spam folder, unless you configure custom domain for your email.
+
+BASE_URL can remain the same as in the template unless you are changing the port. If deploying to Vercel, the next.config.js file will automatically handle the production or staging base url configuration.
+
+DATABASE_SSL_CERT is used to encrypt data that is passed back and forth from your hosted database. Supabase [recommends](https://supabase.com/docs/guides/database/connecting-to-postgres#connecting-with-ssl) connecting with SSL. The application expects this to be encoded using base64. Once you have downloaded your SSL certificate from Supabase, you can use this command to encode the cert in base64:
+
+```bash
+openssl base64 -in /path/to/certificate.crt -out certificate_base64.txt
+```
 
 Finally, run the development server:
 
@@ -36,7 +52,7 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
-Don't forget to set an [environment variable](https://vercel.com/docs/concepts/projects/environment-variables) for `NEXTAUTH_SECRET` and `DATABASE_URL` in your project.
+Don't forget to set an [environment variable](https://vercel.com/docs/concepts/projects/environment-variables) for all the local enviroment variables as well (except BASE_URL).
 
 ### Done
 
@@ -59,11 +75,13 @@ Don't forget to set an [environment variable](https://vercel.com/docs/concepts/p
 
 ### In Progress
 
-- Deactivate account
+- Data explorer dashboard
 
 ### Todo
 
+- Org structure with schema
 - Config for dev vs production environments
+- Deactivate account
 - Roles
 - Admin page
 - User management
@@ -79,4 +97,4 @@ Don't forget to set an [environment variable](https://vercel.com/docs/concepts/p
 - Event handlers cannot be passed to Client Component props.
 - [This](https://nextjs.org/docs/app/api-reference/file-conventions/page) is how you get url params in server components
 - You can't use relative URLs from the server side
-- [<Link>](https://nextjs.org/docs/app/api-reference/components/link) tags will be prefetched, which will cause a crash if you are loading data for a lot of links at once. This can be disabled using `prefetch={false}` prop
+- [Link](https://nextjs.org/docs/app/api-reference/components/link) tags will be prefetched, which will cause a crash if you are loading data for a lot of links at once. This can be disabled using `prefetch={false}` prop

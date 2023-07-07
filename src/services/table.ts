@@ -1,4 +1,3 @@
-import { metadata } from "@/app/layout";
 import db from "@/lib/db";
 
 export interface TableList {
