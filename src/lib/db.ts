@@ -1,6 +1,6 @@
 import postgres from "postgres";
 import { User, UserRepository } from "@/services/user";
-import { TableList, TableRepository } from "@/services/table";
+import { TableList, Table, TableRepository } from "@/services/table";
 
 class postgresDatabase implements UserRepository, TableRepository {
   sql: postgres.Sql<{}>;
@@ -71,7 +71,7 @@ class postgresDatabase implements UserRepository, TableRepository {
     return this.transformer.convertRowToUser(userResult[0]);
   }
 
-  async findAllTables() {
+  async findAllTables(): Promise<TableList[]> {
     const tables = await this.sql`
     SELECT
       c.oid :: int8 AS id,
@@ -93,17 +93,30 @@ class postgresDatabase implements UserRepository, TableRepository {
         OR has_any_column_privilege(c.oid, 'SELECT, INSERT, UPDATE, REFERENCES')
       )
     `;
-    return this.transformer.convertRowsToTableMetadata(tables);
+    return this.transformer.convertRowsToTableList(tables);
   }
 
-  async getTableData(tableName: string) {
+  public async findTableById(id: number) {
+    const tableMeta = await this.getTableMetadata(id);
+    const data = await this.getTableData(tableMeta.table_name);
+    const table: Table = {
+      tableMetadata: tableMeta,
+      data: data,
+    };
+    return table;
+  }
+
+  private async getTableData(tableName: string): Promise<{}[]> {
     const data = await this.sql`
     select * from ${this.sql(tableName)}
   `;
     return data;
   }
 
-  async getAllColumns(tableId: number) {
+  private async getTableMetadata(tableId: number): Promise<{
+    table_name: string;
+    columns: { label: string; data_type: string }[];
+  }> {
     let columns = await this.sql`
     SELECT 
         c.relname AS table_name,
@@ -123,7 +136,7 @@ class postgresDatabase implements UserRepository, TableRepository {
         a.attnum;
   `;
     columns = this.transformer.transformDataType(columns);
-    return columns;
+    return this.transformer.convertRowsToTableMetadata(columns);
   }
 }
 
@@ -135,16 +148,37 @@ class DataTransformer {
       email: row.email,
       password: row.password,
       isVerified: row.is_verified,
-    } as User;
+    };
   }
 
-  convertRowsToTableMetadata(rows: postgres.Row[]): TableList[] {
+  convertRowsToTableList(rows: postgres.Row[]): TableList[] {
     return rows.map((row) => {
       return {
         id: row.id,
         schema: row.schema,
         name: row.name,
-      } as TableList;
+      };
+    });
+  }
+
+  convertRowsToTableMetadata(rows: postgres.Row[]): {
+    table_name: string;
+    columns: { label: string; data_type: string }[];
+  } {
+    return {
+      table_name: rows[0].table_name,
+      columns: this.convertRowsToColumnMetadata(rows),
+    };
+  }
+
+  convertRowsToColumnMetadata(
+    rows: postgres.Row[]
+  ): { label: string; data_type: string }[] {
+    return rows.map((row) => {
+      return {
+        label: row.column_name,
+        data_type: row.data_type,
+      };
     });
   }
 

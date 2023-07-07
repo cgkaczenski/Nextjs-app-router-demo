@@ -1,3 +1,4 @@
+import { metadata } from "@/app/layout";
 import db from "@/lib/db";
 
 export interface TableList {
@@ -6,8 +7,17 @@ export interface TableList {
   name: string;
 }
 
+export interface Table {
+  tableMetadata: {
+    table_name: string;
+    columns: { label: string; data_type: string }[];
+  };
+  data: {}[];
+}
+
 export interface TableRepository {
   findAllTables(): Promise<TableList[]>;
+  findTableById(id: number): Promise<Table>;
 }
 
 class TableService {
@@ -15,6 +25,15 @@ class TableService {
 
   constructor(database: TableRepository) {
     this.database = database;
+  }
+
+  public async getTablesJsonById(id: number) {
+    const table = await this.database.findTableById(id);
+    const response = {
+      metadata: table.tableMetadata,
+      data: table.data,
+    };
+    return response;
   }
 
   public async getAllTablesListJson() {
