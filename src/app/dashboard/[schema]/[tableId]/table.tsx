@@ -3,7 +3,7 @@
 import DataTable from "@/components/datatable";
 import toast from "react-hot-toast";
 
-export default async function Table(props: { tableId: string; jsonData: any }) {
+export default function Table(props: { tableId: string; jsonData: any }) {
   const { jsonData } = props;
 
   async function handleSave(changes: Record<string, any>) {
