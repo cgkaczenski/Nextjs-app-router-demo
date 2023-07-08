@@ -27,10 +27,12 @@ export default async function DashboardPage() {
     links: jsonData.metadata.links as { label: string; href: string }[],
   };
   return (
-    <DataTable
-      columns={jsonData.metadata.columns}
-      data={jsonData.data}
-      links={links}
-    />
+    <div className="px-6 py-3 mx-auto">
+      <DataTable
+        columns={jsonData.metadata.columns}
+        data={jsonData.data}
+        links={links}
+      />
+    </div>
   );
 }

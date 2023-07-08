@@ -44,5 +44,9 @@ export default async function TablePage({
     jsonData.metadata.columns = addEditableFlag(jsonData.metadata.columns);
   }
 
-  return <Table tableId={tableId} jsonData={jsonData} />;
+  return (
+    <div className="px-6 py-3 mx-auto">
+      <Table tableId={tableId} jsonData={jsonData} />
+    </div>
+  );
 }

@@ -81,7 +81,7 @@ export default function DataTable(prop: {
         <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-              <table className="min-w-full divide-y divide-gray-200">
+              <table className="min-w-full divide-y divide-gray-200 table-fixed">
                 <thead className="bg-gray-50">
                   <tr>
                     {columns.map((column, index) => (
@@ -102,56 +102,59 @@ export default function DataTable(prop: {
                         {columns.map((column, colIndex) => (
                           <td
                             key={colIndex}
-                            className="px-6 py-4 whitespace-nowrap"
+                            className="px-6 py-4 whitespace-nowrap overflow-auto"
                           >
-                            {column.isEditable ? (
-                              <EditableCell
-                                resetKey={resetKey}
-                                saveKey={saveKey}
-                                value={row[column.label]}
-                                onEdit={(newValue) =>
-                                  handleEdit(row.id, column.label, newValue)
-                                }
-                              />
-                            ) : (
-                              <div className="text-sm text-gray-900">
-                                {links && column.label === links.column_name ? (
-                                  (() => {
-                                    const linkObj = links.links.find(
-                                      (link) =>
-                                        link.label === row[links.matching_key]
-                                    );
-                                    if (linkObj) {
-                                      return (
-                                        <Link
-                                          href={linkObj.href}
-                                          className="text-blue-400"
-                                          prefetch={false}
-                                        >
-                                          {row[column.label]}
-                                        </Link>
+                            <div className="max-w-xs overflow-auto">
+                              {column.isEditable ? (
+                                <EditableCell
+                                  resetKey={resetKey}
+                                  saveKey={saveKey}
+                                  value={row[column.label]}
+                                  onEdit={(newValue) =>
+                                    handleEdit(row.id, column.label, newValue)
+                                  }
+                                />
+                              ) : (
+                                <div className="text-sm text-gray-900">
+                                  {links &&
+                                  column.label === links.column_name ? (
+                                    (() => {
+                                      const linkObj = links.links.find(
+                                        (link) =>
+                                          link.label === row[links.matching_key]
                                       );
-                                    } else {
-                                      return (
-                                        <p>
-                                          {formatValue(
-                                            row[column.label],
-                                            column.data_type
-                                          )}
-                                        </p>
-                                      );
-                                    }
-                                  })()
-                                ) : (
-                                  <p>
-                                    {formatValue(
-                                      row[column.label],
-                                      column.data_type
-                                    )}
-                                  </p>
-                                )}
-                              </div>
-                            )}
+                                      if (linkObj) {
+                                        return (
+                                          <Link
+                                            href={linkObj.href}
+                                            className="text-blue-400"
+                                            prefetch={false}
+                                          >
+                                            {row[column.label]}
+                                          </Link>
+                                        );
+                                      } else {
+                                        return (
+                                          <p>
+                                            {formatValue(
+                                              row[column.label],
+                                              column.data_type
+                                            )}
+                                          </p>
+                                        );
+                                      }
+                                    })()
+                                  ) : (
+                                    <p>
+                                      {formatValue(
+                                        row[column.label],
+                                        column.data_type
+                                      )}
+                                    </p>
+                                  )}
+                                </div>
+                              )}
+                            </div>
                           </td>
                         ))}
                       </tr>
