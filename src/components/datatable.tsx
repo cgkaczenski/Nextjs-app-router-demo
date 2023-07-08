@@ -20,7 +20,12 @@ const formatValue = (value: any, dataType: string) => {
 };
 
 export default function DataTable(prop: {
-  columns: { label: string; data_type: string; isEditable?: boolean }[];
+  columns: {
+    label: string;
+    data_type: string;
+    input_type: string;
+    isEditable?: boolean;
+  }[];
   data: Record<string, any>[];
   links?: {
     column_name: string;
@@ -120,6 +125,7 @@ export default function DataTable(prop: {
                                   resetKey={resetKey}
                                   saveKey={saveKey}
                                   value={row[column.label]}
+                                  input_type={column.input_type}
                                   onEdit={(newValue) =>
                                     handleEdit(row.id, column.label, newValue)
                                   }

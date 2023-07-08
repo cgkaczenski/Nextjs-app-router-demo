@@ -148,13 +148,16 @@ class postgresDatabase implements UserRepository, TableRepository {
     SELECT 
         c.relname AS table_name,
         a.attname AS column_name, 
-        pg_catalog.format_type(a.atttypid, a.atttypmod) AS data_type
+        pg_catalog.format_type(a.atttypid, a.atttypmod) AS data_type,
+        ca.input_type AS input_type
     FROM 
         pg_catalog.pg_attribute a
     JOIN 
         pg_catalog.pg_class c ON a.attrelid = c.oid
     JOIN 
         pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+    LEFT JOIN 
+        system.attribute ca ON ca.table_id = c.oid AND ca.column_name = a.attname
     WHERE 
         c.oid = ${tableId}
         AND a.attnum > 0 -- only consider attribute (column) numbers that are positive
@@ -194,7 +197,7 @@ class DataTransformer {
   ): {
     id: number;
     table_name: string;
-    columns: { label: string; data_type: string }[];
+    columns: { label: string; data_type: string; input_type: string | null }[];
   } {
     return {
       id: id,
@@ -205,11 +208,12 @@ class DataTransformer {
 
   convertRowsToColumnMetadata(
     rows: postgres.Row[]
-  ): { label: string; data_type: string }[] {
+  ): { label: string; data_type: string; input_type: string | null }[] {
     return rows.map((row) => {
       return {
         label: row.column_name,
         data_type: row.data_type,
+        input_type: row.input_type,
       };
     });
   }
@@ -221,7 +225,7 @@ class DataTransformer {
       } else if (item.data_type === "timestamp with time zone") {
         return { ...item, data_type: "datetime" };
       } else {
-        return { ...item, data_type: "string" };
+        return { ...item, data_type: "text" };
       }
     });
   }

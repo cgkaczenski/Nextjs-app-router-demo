@@ -18,7 +18,7 @@ export default async function TablePage({
 
   function addEditableFlag(columns: any[]) {
     return columns.map((column) => {
-      if (["first_name", "last_name"].includes(column.label)) {
+      if (column.input_type !== "disabled" && column.input_type !== null) {
         return { ...column, isEditable: true };
       }
       return column;
@@ -40,10 +40,7 @@ export default async function TablePage({
     return <div>error</div>;
   }
   let jsonData = await response.json();
-  if (jsonData.metadata.table_name === "user") {
-    jsonData.metadata.columns = addEditableFlag(jsonData.metadata.columns);
-  }
-
+  jsonData.metadata.columns = addEditableFlag(jsonData.metadata.columns);
   return (
     <div className="px-6 py-3 mx-auto">
       <Table tableId={tableId} jsonData={jsonData} />
