@@ -1,9 +1,17 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import DataTable from "@/components/datatable";
 import toast from "react-hot-toast";
 
 export default function Table(props: { tableId: string; jsonData: any }) {
+  const [hasMounted, setHasMounted] = useState(false);
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+  if (!hasMounted) {
+    return null;
+  }
   const { jsonData } = props;
 
   async function handleSave(changes: Record<string, any>) {
