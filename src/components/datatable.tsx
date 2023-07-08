@@ -37,17 +37,27 @@ export default function DataTable(prop: {
   const [localChanges, setLocalChanges] = useState<any>({});
 
   function handleEdit(id: string, column: string, value: any) {
+    const originalRow = data.find((row) => row.id === id);
     setLocalChanges((prevChanges: any) => {
-      return {
-        ...prevChanges,
-        [id]: {
-          ...(prevChanges[id] || {}),
+      const newChanges = { ...prevChanges };
+      if (originalRow && originalRow[column] !== value) {
+        newChanges[id] = {
+          ...(newChanges[id] || {}),
           id: id,
           [column]: value,
-        },
-      };
+        };
+      } else {
+        if (newChanges[id]) {
+          delete newChanges[id][column];
+          // If there is only one key in the newChanges, it is just the id and can be deleted
+          if (Object.keys(newChanges[id]).length === 1) {
+            delete newChanges[id];
+          }
+        }
+      }
+      setUnsavedChanges(Object.keys(newChanges).length !== 0);
+      return newChanges;
     });
-    setUnsavedChanges(true);
   }
 
   async function handleSave() {

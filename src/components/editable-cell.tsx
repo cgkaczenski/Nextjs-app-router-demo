@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
+import { on } from "events";
 
 export default function EditableCell(prop: {
   resetKey: number;
