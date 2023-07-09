@@ -7,7 +7,7 @@ export async function POST(request: Request) {
   const { enteredEmail } = body;
 
   try {
-    userService.sendPasswordResetEmail(enteredEmail);
+    await userService.sendPasswordResetEmail(enteredEmail);
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 401 });
   }

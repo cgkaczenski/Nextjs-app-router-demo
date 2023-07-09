@@ -31,7 +31,6 @@ export default function EditableCell(prop: {
       setUnsavedChanges(false);
     }
     setIsEditing(false);
-    console.log("isvalid? ", e.target.checkValidity());
     if (e.target.checkValidity()) {
       onEdit(inputValue);
       setIsValid(true);
