@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 
-export default function EditableCell(prop: {
+export default function EditableCell(props: {
+  key: any;
   resetKey: number;
   saveKey: number;
   value: string;
@@ -11,9 +12,9 @@ export default function EditableCell(prop: {
   onEdit: (newValue: string) => void;
 }) {
   const [originalValue, setOriginalValue] = useState(
-    prop.value ? prop.value : ""
+    props.value ? props.value : ""
   );
-  const { resetKey, saveKey, input_type, onEdit } = prop;
+  const { resetKey, saveKey, input_type, onEdit } = props;
   const [isEditing, setIsEditing] = useState(false);
   const [unsavedChanges, setUnsavedChanges] = useState(false);
   const [inputValue, setInputValue] = useState(originalValue);
@@ -78,7 +79,7 @@ export default function EditableCell(prop: {
       </div>
     </div>
   ) : (
-    <div className="flex justify-between group">
+    <div key={props.key} className="flex justify-between group">
       <div className="justify-center text-sm text-gray-900">{inputValue}</div>
       <PencilSquareIcon
         onClick={() => handleEdit()}

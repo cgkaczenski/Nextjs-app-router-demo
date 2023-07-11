@@ -120,9 +120,13 @@ export default function DataTable(prop: {
     }
     const sortedData = sortObjectsByKey([...data], column, sortedInverse);
     setData(sortedData);
+    setUnsavedChanges(false);
+    setResetKey(resetKey + 1);
   }
 
-  useEffect(() => {}, [data]);
+  useEffect(() => {
+    setData(prop.data);
+  }, [prop.data]);
 
   return (
     <div>
@@ -155,12 +159,13 @@ export default function DataTable(prop: {
                       <tr key={rowIndex}>
                         {columns.map((column, colIndex) => (
                           <td
-                            key={colIndex}
+                            key={`${rowIndex}-${colIndex}`}
                             className="px-6 py-4 whitespace-nowrap overflow-auto"
                           >
                             <div className="max-w-xs overflow-auto">
                               {column.isEditable ? (
                                 <EditableCell
+                                  key={`${row.id}-${column.label}`}
                                   resetKey={resetKey}
                                   saveKey={saveKey}
                                   value={row[column.label]}
