@@ -20,7 +20,7 @@ export default function Navbar() {
     "rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75";
 
   return (
-    <header className="sticky top-0 w-full shadow-md flex bg-slate-50 h-20 justify-between items-center px-4 sm:px-12">
+    <header className="top-0 w-full shadow-md flex bg-slate-50 h-20 justify-between items-center px-4 sm:px-12">
       <div className="flex items-center space-x-4">
         <Link href="/" className="font-bold font-mono">
           Next.js Demo
