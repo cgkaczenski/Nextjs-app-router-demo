@@ -6,12 +6,13 @@ module.exports = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {maxWidth: { "xxs": "14rem" },},
   },
   plugins: [],
   variants: {
     extend: {
       opacity: ["group-hover"],
+      overflow: ['hover'],
     },
   },
 };

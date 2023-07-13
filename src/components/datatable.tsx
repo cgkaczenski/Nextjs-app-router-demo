@@ -130,18 +130,18 @@ export default function DataTable(prop: {
 
   return (
     <div>
-      <div className="flex flex-col">
-        <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8 ">
-          <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-            <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-              <table className="min-w-full divide-y divide-gray-200 table-fixed">
-                <thead className="bg-gray-50 ">
+      <div className="">
+        <div className="mt-8 flow-root">
+          <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+              <table className="min-w-full divide-y divide-gray-300">
+                <thead>
                   <tr>
                     {columns.map((column, index) => (
                       <th
                         key={index}
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        className="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900 uppercase"
                       >
                         <div className="flex items-center">
                           {column.label}
@@ -160,9 +160,9 @@ export default function DataTable(prop: {
                         {columns.map((column, colIndex) => (
                           <td
                             key={`${rowIndex}-${colIndex}`}
-                            className="px-6 py-4 whitespace-nowrap overflow-auto"
+                            className="whitespace-nowrap px-2 py-2 text-sm text-gray-900 max-w-xxs"
                           >
-                            <div className="max-w-xs overflow-auto">
+                            <div className="max-w-xxs overflow-hidden hover:overflow-auto">
                               {column.isEditable ? (
                                 <EditableCell
                                   key={`${row.id}-${column.label}`}
