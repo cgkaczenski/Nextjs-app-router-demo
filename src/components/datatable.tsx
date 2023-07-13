@@ -28,8 +28,16 @@ const sortObjectsByKey = (
   inverse: boolean = false
 ) => {
   return array.sort((a, b) => {
-    const aValue = typeof a[key] === "string" ? a[key].toLowerCase() : a[key];
-    const bValue = typeof b[key] === "string" ? b[key].toLowerCase() : b[key];
+    let aValue = typeof a[key] === "string" ? a[key].toLowerCase() : a[key];
+    let bValue = typeof b[key] === "string" ? b[key].toLowerCase() : b[key];
+
+    // Handle empty strings and null values
+    if (aValue === "" || aValue === null) {
+      return inverse ? -1 : 1;
+    }
+    if (bValue === "" || bValue === null) {
+      return inverse ? 1 : -1;
+    }
 
     if (aValue < bValue) {
       return inverse ? 1 : -1;
@@ -39,6 +47,8 @@ const sortObjectsByKey = (
     return 0;
   });
 };
+
+
 
 export default function DataTable(prop: {
   columns: {
@@ -62,7 +72,7 @@ export default function DataTable(prop: {
   const [unsavedChanges, setUnsavedChanges] = useState(false);
   const [localChanges, setLocalChanges] = useState<any>({});
   const [sortedColumn, setSortedColumn] = useState<string | null>(null);
-  const [sortedInverse, setSortedInverse] = useState(false);
+  const [sortedInverse, setSortedInverse] = useState(true);
 
   function handleEdit(id: string, column: string, value: any) {
     const originalRow = data.find((row) => row.id === id);
@@ -113,12 +123,10 @@ export default function DataTable(prop: {
   }
 
   function handleSort(column: string) {
-    if (sortedColumn === column) {
-      setSortedInverse(!sortedInverse);
-    } else {
-      setSortedColumn(column);
-    }
+    setSortedColumn(column);
+    setSortedInverse(!sortedInverse);
     const sortedData = sortObjectsByKey([...data], column, sortedInverse);
+    console.log(sortedData);
     setData(sortedData);
     setUnsavedChanges(false);
     setResetKey(resetKey + 1);
@@ -146,7 +154,7 @@ export default function DataTable(prop: {
                         <div className="flex items-center">
                           {column.label}
                           <a onClick={() => handleSort(column.label)}>
-                            <ArrowsUpDownIcon className="w-3 h-3 ml-1.5" />
+                            <ArrowsUpDownIcon className="w-3 h-3 ml-1.5 hover:cursor-pointer" />
                           </a>
                         </div>
                       </th>
