@@ -309,7 +309,7 @@ export default function DataTable(prop: {
               className={`relative inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300focus-visible:outline-offset-0 ${
                 pageNumber === 1
                   ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  : "bg-white text-gray-900 hover:bg-gray-50 "
+                  : "bg-white text-gray-900 hover:bg-gray-50 hover:cursor-pointer"
               }`}
               onClick={handlePrevious}
             >
@@ -319,7 +319,7 @@ export default function DataTable(prop: {
               className={`relative ml-3 inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300 focus-visible:outline-offset-0 ${
                 recordCount + offset === total_count
                   ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  : "bg-white hover:bg-gray-50  text-gray-900"
+                  : "bg-white hover:bg-gray-50  text-gray-900 hover:cursor-pointer"
               }`}
               onClick={handleNext}
             >
