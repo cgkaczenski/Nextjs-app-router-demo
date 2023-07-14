@@ -34,14 +34,33 @@ export default function Table(props: { tableId: string; jsonData: any }) {
     }
   }
 
+  async function handleFetch(pageSize: number, pageNumber: number) {
+    const response = await fetch(
+      `/api/tables/${props.tableId}?page_size=${pageSize}&page_number=${pageNumber}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        cache: "no-store",
+      }
+    );
+    const data = await response.json();
+    if (!response.ok) {
+      toast.error(data.error);
+      return false;
+    }
+    if (response.ok) {
+      return data.data;
+    }
+  }
+
   return jsonData ? (
     <DataTable
       columns={jsonData.metadata.columns}
       data={jsonData.data}
       onSave={handleSave}
-      page_size={jsonData.metadata.page_size}
-      page_number={jsonData.metadata.page_number}
-      record_count={jsonData.metadata.record_count}
+      onFetch={handleFetch}
       total_count={jsonData.metadata.total_count}
     />
   ) : (

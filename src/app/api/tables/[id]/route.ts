@@ -19,6 +19,17 @@ export async function GET(
       { status: 401, headers: corsHeaders }
     );
   }
+  const { searchParams } = new URL(request.url);
+  let pageSize, pageNumber;
+  if (searchParams.has('page_size') && searchParams.has('page_number')) {
+    pageSize = Number(searchParams.get('page_size'));
+    pageNumber = Number(searchParams.get('page_number'));
+  }
+  if (pageSize && pageNumber) {
+    const response = await tableService.getTablesJsonById(params.id, pageSize, pageNumber);
+    return NextResponse.json(response, { status: 200, headers: corsHeaders });
+  }
+
   const response = await tableService.getTablesJsonById(params.id);
   return NextResponse.json(response, { status: 200, headers: corsHeaders });
 }

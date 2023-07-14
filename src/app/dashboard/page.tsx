@@ -26,16 +26,14 @@ export default async function DashboardPage() {
     matching_key: "name",
     links: jsonData.metadata.links as { label: string; href: string }[],
   };
+  const total_count = jsonData.data.length;
   return (
     <div className="px-6 py-3 mx-auto">
       <DataTable
         columns={jsonData.metadata.columns}
         data={jsonData.data}
         links={links}
-        page_size={jsonData.metadata.page_size}
-        page_number={jsonData.metadata.page_number}
-        record_count={jsonData.metadata.record_count}
-        total_count={jsonData.metadata.total_count}
+        total_count={total_count}
       />
     </div>
   );

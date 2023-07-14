@@ -62,24 +62,23 @@ export default function DataTable(prop: {
     links: { label: string; href: string }[];
   };
   onSave?: (changes: Record<string, any>) => Promise<boolean | undefined>;
-  onNextPage?: (pageSize:number, pageNumber: number) => Promise<boolean | undefined>;
-  onPreviousPage?: (pageSize:number, pageNumber: number, ) => Promise<boolean | undefined>;
-  page_size: number;
-  page_number: number;
-  record_count: number;
+  onFetch?: (
+    pageSize: number,
+    pageNumber: number
+  ) => Promise<Record<string, any>[]>;
   total_count: number;
 }) {
-  const { columns, links, onSave, total_count, record_count, page_size } = prop;
-  const [pageNumber, setPageNumber] = useState(prop.page_number);
+  const page_size = 100;
+  const { columns, links, onSave, total_count } = prop;
+  const [pageNumber, setPageNumber] = useState(1);
   const [offset, setOffset] = useState(0);
   const [data, setData] = useState<Record<string, any>[]>(prop.data);
+  const [recordCount, setRecordCount] = useState(data.length);
   const [resetKey, setResetKey] = useState(0);
   const [saveKey, setSaveKey] = useState(0);
   const [unsavedChanges, setUnsavedChanges] = useState(false);
   const [localChanges, setLocalChanges] = useState<any>({});
   const [sortedInverse, setSortedInverse] = useState(true);
-
-  console.log('offset', record_count);
 
   function handleEdit(id: string, column: string, value: any) {
     const originalRow = data.find((row) => row.id === id);
@@ -119,6 +118,33 @@ export default function DataTable(prop: {
         setData(updateData);
         setUnsavedChanges(false);
         setSaveKey(saveKey + 1);
+      }
+    }
+  }
+
+  async function handleNext() {
+    if (
+      typeof prop.onFetch === "function" &&
+      recordCount + offset !== total_count
+    ) {
+      const data = await prop.onFetch(page_size, pageNumber + 1);
+      if (data) {
+        setData(data);
+        setRecordCount(data.length);
+        setPageNumber(pageNumber + 1);
+        setOffset(offset + page_size);
+      }
+    }
+  }
+
+  async function handlePrevious() {
+    if (typeof prop.onFetch === "function" && pageNumber > 1) {
+      const data = await prop.onFetch(page_size, pageNumber - 1);
+      if (data) {
+        setData(data);
+        setRecordCount(data.length);
+        setPageNumber(pageNumber - 1);
+        setOffset(offset - page_size);
       }
     }
   }
@@ -266,33 +292,42 @@ export default function DataTable(prop: {
           </button>
         </div>
       )}
-      <nav
-  className="sticky bottom-0 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 z-10"
-  aria-label="Pagination"
->
-  <div className="hidden sm:block">
-    <p className="text-sm text-gray-700">
-      Showing <span className="font-medium">{1 + offset}</span> to <span className="font-medium">{record_count + offset}</span> of{' '}
-      <span className="font-medium">{total_count}</span> results
-    </p>
-  </div>
-  <div className="flex flex-1 justify-between sm:justify-end">
-    <a
-      href="#"
-      className="relative inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline-offset-0"
-    >
-      Previous
-    </a>
-    <a
-      href="#"
-      className="relative ml-3 inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline-offset-0"
-    >
-      Next
-    </a>
-  </div>
-</nav>
-
+      {total_count > 0 && (
+        <nav
+          className="sticky bottom-0 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 z-10"
+          aria-label="Pagination"
+        >
+          <div className="hidden sm:block">
+            <p className="text-sm text-gray-700">
+              Showing <span className="font-medium">{1 + offset}</span> to{" "}
+              <span className="font-medium">{recordCount + offset}</span> of{" "}
+              <span className="font-medium">{total_count}</span> results
+            </p>
+          </div>
+          <div className="flex flex-1 justify-between sm:justify-end">
+            <a
+              className={`relative inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300focus-visible:outline-offset-0 ${
+                pageNumber === 1
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-white text-gray-900 hover:bg-gray-50 "
+              }`}
+              onClick={handlePrevious}
+            >
+              Previous
+            </a>
+            <a
+              className={`relative ml-3 inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300 focus-visible:outline-offset-0 ${
+                recordCount + offset === total_count
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-white hover:bg-gray-50  text-gray-900"
+              }`}
+              onClick={handleNext}
+            >
+              Next
+            </a>
+          </div>
+        </nav>
+      )}
     </div>
-    
   );
 }
