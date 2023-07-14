@@ -32,6 +32,10 @@ export default async function DashboardPage() {
         columns={jsonData.metadata.columns}
         data={jsonData.data}
         links={links}
+        page_size={jsonData.metadata.page_size}
+        page_number={jsonData.metadata.page_number}
+        record_count={jsonData.metadata.record_count}
+        total_count={jsonData.metadata.total_count}
       />
     </div>
   );

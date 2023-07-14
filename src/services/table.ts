@@ -21,7 +21,7 @@ export interface RowMap {
 
 export interface TableRepository {
   findAllTables(): Promise<TableList[]>;
-  findTableById(id: number): Promise<Table>;
+  findTableById(id: number, page_size: number, page_number: number): Promise<Table>;
   updateRowsByMap(rowMap: RowMap): Promise<void>;
 }
 
@@ -32,11 +32,24 @@ class TableService {
     this.database = database;
   }
 
-  public async getTablesJsonById(id: number) {
-    const table = await this.database.findTableById(id);
+  public async getTablesJsonById(id: number, page_size: number = 100, page_number: number = 1) {
+    const table = await this.database.findTableById(id, page_size, page_number);
+    let data = table.data as {[key: string]: string | number | boolean;}[];
+
+    let total_count = 0;
+    if (data.length > 0) {
+      total_count = Number(data[0].total_count);
+      data = data.map((row) => {
+        const { ['total_count']:_, ...rest } = row;
+        return rest;
+      });
+    }
+
+    let metadata = table.tableMetadata as {};
+    metadata = { ...metadata, record_count: table.data.length, total_count: total_count, page_size: page_size, page_number: page_number };
     const response = {
-      metadata: table.tableMetadata,
-      data: table.data,
+      metadata: metadata,
+      data: data,
     };
     return response;
   }
@@ -66,7 +79,7 @@ class TableService {
       { label: "name", data_type: "string" },
     ];
     const links = this.generateLinks(data);
-    return { table_name: "All Tables", links: links, columns: columns };
+    return { table_name: "All Tables", record_count: data.length, links: links, columns: columns };
   }
 
   private generateLinks(data: TableList[]) {

@@ -96,9 +96,9 @@ class postgresDatabase implements UserRepository, TableRepository {
     return this.transformer.convertRowsToTableList(tables);
   }
 
-  public async findTableById(id: number) {
+  public async findTableById(id: number, page_size: number, page_number: number) {
     const tableMeta = await this.getTableMetadata(id);
-    const data = await this.getTableData(tableMeta.table_name);
+    let data = await this.getTableData(tableMeta.table_name, page_size, page_number);
     const table: Table = {
       tableMetadata: tableMeta,
       data: data,
@@ -132,9 +132,15 @@ class postgresDatabase implements UserRepository, TableRepository {
     }
   }
 
-  private async getTableData(tableName: string): Promise<{}[]> {
+  private async getTableData(tableName: string, page_size:number, page_number:number): Promise<{
+    [key: string]: string | number | boolean;
+  }[]> {
+    const offset = (page_number - 1) * page_size;
     const data = await this.sql`
-    select * from ${this.sql(tableName)}
+    SELECT *, COUNT(*) OVER() AS total_count
+    FROM ${this.sql(tableName)}
+    ORDER BY id ASC
+    LIMIT ${page_size} OFFSET ${offset}
   `;
     return data;
   }

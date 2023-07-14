@@ -39,6 +39,10 @@ export default function Table(props: { tableId: string; jsonData: any }) {
       columns={jsonData.metadata.columns}
       data={jsonData.data}
       onSave={handleSave}
+      page_size={jsonData.metadata.page_size}
+      page_number={jsonData.metadata.page_number}
+      record_count={jsonData.metadata.record_count}
+      total_count={jsonData.metadata.total_count}
     />
   ) : (
     <div>Loading...</div>
