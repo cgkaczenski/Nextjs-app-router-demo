@@ -46,7 +46,7 @@ export default function AuthForm(props: { isLoginUI: boolean }) {
       });
       if (!result?.error) {
         toast.success("Logged in successfully!");
-        router.replace("/");
+        router.replace("/dashboard");
       }
       if (result?.error) {
         toast.error(result.error);
