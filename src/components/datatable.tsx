@@ -158,7 +158,6 @@ export default function DataTable(prop: {
   function handleSort(column: string) {
     setSortedInverse(!sortedInverse);
     const sortedData = sortObjectsByKey([...data], column, sortedInverse);
-    console.log(sortedData);
     setData(sortedData);
     setUnsavedChanges(false);
     setResetKey(resetKey + 1);
