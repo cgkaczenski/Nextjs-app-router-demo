@@ -6,10 +6,6 @@ On May 4th 2023, Next.js 13.4 was released, marking stability for the App Router
 
 I am creating this repo as a learning demo, so I can learn this new mental model.
 
-## Live demo
-
-The live demo can be found [here](https://nextjs-app-router-demo.vercel.app/).
-
 ## Getting Started - Local Development
 
 First, create a new file in the root directory `.env`. I have provided a .env.template file you can use as a guide.
@@ -73,18 +69,6 @@ Don't forget to set an [environment variable](https://vercel.com/docs/concepts/p
 - Email verification
 - Welcome email
 
-### In Progress
-
-- Data explorer dashboard
-
-### Todo
-
-- Org structure with schema
-- Config for dev vs production environments
-- Deactivate account
-- Roles
-- Admin page
-- User management
 
 ### Things I've learned
 
